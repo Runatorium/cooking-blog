@@ -511,17 +511,12 @@ const EditRecipe = () => {
               <div className="footer-column">
                 <h4>Chi Siamo</h4>
                 <Link to="/history">La Nostra Storia</Link>
-                <Link to="/about/family">Conosci la Famiglia</Link>
                 <Link to="/contact">Contattaci</Link>
-                <Link to="/classes">Corsi di Cucina</Link>
               </div>
               <div className="footer-column">
                 <h4>Seguici</h4>
                 <div className="social-icons">
                   <a href="#" aria-label="Facebook">f</a>
-                  <a href="#" aria-label="Instagram">📷</a>
-                  <a href="#" aria-label="Pinterest">📌</a>
-                  <a href="#" aria-label="YouTube">▶️</a>
                 </div>
               </div>
             </div>

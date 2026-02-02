@@ -64,6 +64,19 @@ const LandingPage = () => {
   const featuredRecipe = recipes.length > 0 ? recipes[0] : null;
   const latestRecipes = recipes.length > 1 ? recipes.slice(1, 4) : [];
 
+  // Count recipes by category
+  const getCategoryCount = (displayCategory) => {
+    const categoryMap = {
+      'Pane & Pizza': 'Bread & Pizza',
+      'Primi Piatti': 'Pasta Dishes',
+      'Carne & Pollame': 'Meat & Poultry',
+      'Dolci': 'Desserts',
+      'Pesce': 'Fish',
+    };
+    const dbCategory = categoryMap[displayCategory];
+    return recipes.filter(recipe => recipe.category === dbCategory).length;
+  };
+
   const handleEmailSubmit = (e) => {
     e.preventDefault();
     // TODO: Implement newsletter subscription
@@ -281,27 +294,27 @@ const LandingPage = () => {
             <div className="category-card">
               <div className="category-icon">🍞</div>
               <h3>Pane & Pizza</h3>
-              <p>24 ricette</p>
+              <p>{getCategoryCount('Pane & Pizza')} {getCategoryCount('Pane & Pizza') === 1 ? 'ricetta' : 'ricette'}</p>
             </div>
             <div className="category-card">
               <div className="category-icon">🍝</div>
               <h3>Primi Piatti</h3>
-              <p>38 ricette</p>
+              <p>{getCategoryCount('Primi Piatti')} {getCategoryCount('Primi Piatti') === 1 ? 'ricetta' : 'ricette'}</p>
             </div>
             <div className="category-card">
               <div className="category-icon">🍗</div>
               <h3>Carne & Pollame</h3>
-              <p>31 ricette</p>
+              <p>{getCategoryCount('Carne & Pollame')} {getCategoryCount('Carne & Pollame') === 1 ? 'ricetta' : 'ricette'}</p>
             </div>
             <div className="category-card">
               <div className="category-icon">🍰</div>
               <h3>Dolci</h3>
-              <p>27 ricette</p>
+              <p>{getCategoryCount('Dolci')} {getCategoryCount('Dolci') === 1 ? 'ricetta' : 'ricette'}</p>
             </div>
             <div className="category-card">
               <div className="category-icon">🐟</div>
               <h3>Pesce</h3>
-              <p>19 ricette</p>
+              <p>{getCategoryCount('Pesce')} {getCategoryCount('Pesce') === 1 ? 'ricetta' : 'ricette'}</p>
             </div>
           </div>
         </div>
@@ -326,17 +339,12 @@ const LandingPage = () => {
               <div className="footer-column">
                 <h4>Chi Siamo</h4>
                 <Link to="/history">La Nostra Storia</Link>
-                <Link to="/about/family">Conosci la Famiglia</Link>
                 <Link to="/contact">Contattaci</Link>
-                <Link to="/classes">Corsi di Cucina</Link>
               </div>
               <div className="footer-column">
                 <h4>Seguici</h4>
                 <div className="social-icons">
                   <a href="#" aria-label="Facebook">f</a>
-                  <a href="#" aria-label="Instagram">📷</a>
-                  <a href="#" aria-label="Pinterest">📌</a>
-                  <a href="#" aria-label="YouTube">▶️</a>
                 </div>
               </div>
             </div>
