@@ -2,12 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
 }
 
 /* Navigation Bar */
 .navbar {
-  background: #fff;
+  background: var(--bg-nav, #f8f5f0);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -71,6 +71,7 @@
 }
 
 .btn-login,
+.btn-publish,
 .btn-subscribe {
   padding: 0.75rem 1.5rem;
   border: 2px solid #d2691e;
@@ -95,6 +96,18 @@
   background: #d2691e;
   color: #fff;
   border-color: #d2691e;
+}
+
+.btn-publish {
+  background: #5a4a3a;
+  color: #fff;
+  border: none;
+}
+
+.btn-publish:hover {
+  background: #4a3a2a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(90, 74, 58, 0.3);
 }
 
 .btn-subscribe {
@@ -205,7 +218,7 @@
 /* Featured Recipe Section */
 .featured-recipe-section {
   padding: 5rem 0;
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
 }
 
 .container {
@@ -245,7 +258,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -328,7 +341,7 @@
 }
 
 .tag-time {
-  background: #f5f5f5;
+  background: #f0ede8;
   color: #5a4a3a;
 }
 
@@ -409,7 +422,7 @@
 /* Latest Recipes Section */
 .latest-recipes-section {
   padding: 5rem 0;
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
 }
 
 .recipes-grid {
@@ -419,7 +432,7 @@
 }
 
 .recipe-card {
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -517,7 +530,7 @@
 /* Categories Section */
 .categories-section {
   padding: 5rem 0;
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
 }
 
 .categories-grid {
@@ -527,7 +540,7 @@
 }
 
 .category-card {
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
   padding: 2.5rem 2rem;
   border-radius: 12px;
   text-align: center;
@@ -561,7 +574,7 @@
 /* Story Section */
 .story-section {
   padding: 5rem 0;
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
 }
 
 .story-content {

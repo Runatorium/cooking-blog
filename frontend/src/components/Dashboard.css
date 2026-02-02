@@ -2,12 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
 }
 
 /* Navigation - reuse styles */
 .navbar {
-  background: #fff;
+  background: var(--bg-nav, #f8f5f0);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -161,7 +161,7 @@
 }
 
 .stat-card {
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -233,7 +233,7 @@
 .no-recipes {
   text-align: center;
   padding: 5rem 2rem;
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -285,7 +285,7 @@
 }
 
 .recipe-card-dashboard {
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -518,6 +518,124 @@
 .btn-delete:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Delete confirmation modal */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 2rem;
+}
+
+.delete-modal-content {
+  background: var(--bg-card, #fdfbf8);
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.delete-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.delete-modal-header h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #5a4a3a;
+  margin: 0;
+  font-family: 'Georgia', serif;
+}
+
+.delete-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #999;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.3s;
+}
+
+.delete-modal-close:hover {
+  color: #5a4a3a;
+}
+
+.delete-modal-body {
+  padding: 1.5rem 2rem;
+}
+
+.delete-modal-body p {
+  margin: 0 0 0.75rem;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.delete-modal-recipe-title {
+  font-weight: 600;
+  color: #5a4a3a !important;
+}
+
+.delete-modal-warning {
+  font-size: 0.9rem !important;
+  color: #999 !important;
+}
+
+.delete-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.25rem 2rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-delete-cancel {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  background: var(--bg-card, #fdfbf8);
+  color: #666;
+  transition: all 0.3s;
+}
+
+.btn-delete-cancel:hover {
+  border-color: #5a4a3a;
+  color: #5a4a3a;
+}
+
+.btn-delete-confirm {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #c62828;
+  color: #fff;
+  transition: all 0.3s;
+}
+
+.btn-delete-confirm:hover {
+  background: #b71c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
 }
 
 /* Footer */

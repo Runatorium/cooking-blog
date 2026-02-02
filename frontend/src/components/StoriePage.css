@@ -2,12 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
 }
 
 /* Navigation - reuse styles */
 .navbar {
-  background: #fff;
+  background: var(--bg-nav, #f8f5f0);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -170,7 +170,7 @@
 }
 
 .story-card {
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);

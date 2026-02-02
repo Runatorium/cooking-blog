@@ -138,6 +138,8 @@ const RecipeDetail = () => {
               {isAuthenticated ? (
                 <>
                   <span className="user-greeting">Benvenuto, {user?.name}!</span>
+                  <Link to="/coupons" className="nav-link">Offerte</Link>
+                  <Link to="/dashboard" className="nav-link">Dashboard</Link>
                   <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
                   <button onClick={logout} className="btn-subscribe">Esci</button>
                 </>
@@ -174,6 +176,8 @@ const RecipeDetail = () => {
               {isAuthenticated ? (
                 <>
                   <span className="user-greeting">Benvenuto, {user?.name}!</span>
+                  <Link to="/coupons" className="nav-link">Offerte</Link>
+                  <Link to="/dashboard" className="nav-link">Dashboard</Link>
                   <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
                   <button onClick={logout} className="btn-subscribe">Esci</button>
                 </>
@@ -213,6 +217,8 @@ const RecipeDetail = () => {
             {isAuthenticated ? (
               <>
                 <span className="user-greeting">Benvenuto, {user?.name}!</span>
+                <Link to="/coupons" className="nav-link">Offerte</Link>
+                <Link to="/dashboard" className="nav-link">Dashboard</Link>
                 <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
                 <button onClick={logout} className="btn-subscribe">Esci</button>
               </>

@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteConfirmRecipe, setDeleteConfirmRecipe] = useState(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -34,13 +35,16 @@ const Dashboard = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questa ricetta?')) {
-      return;
-    }
+  const handleDeleteClick = (recipe) => {
+    setDeleteConfirmRecipe({ id: recipe.id, title: recipe.title });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirmRecipe) return;
+    const { id } = deleteConfirmRecipe;
     try {
       setDeletingId(id);
+      setDeleteConfirmRecipe(null);
       await recipeAPI.deleteRecipe(id);
       setRecipes(recipes.filter(recipe => recipe.id !== id));
     } catch (err) {
@@ -49,6 +53,10 @@ const Dashboard = () => {
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmRecipe(null);
   };
 
   // Get image placeholder class based on category
@@ -91,16 +99,18 @@ const Dashboard = () => {
               <Link to="/recipes" className="nav-link">Ricette</Link>
               <Link to="/history" className="nav-link">Chi Siamo</Link>
               <Link to="/stories" className="nav-link">Storie</Link>
-              {isAuthenticated && (
-                <>
-                  <span className="user-greeting">Benvenuto, {user?.name}!</span>
-                  <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
-                  <button onClick={logout} className="btn-subscribe">Esci</button>
-                </>
-              )}
-            </div>
+            {isAuthenticated && (
+              <>
+                <span className="user-greeting">Benvenuto, {user?.name}!</span>
+                <Link to="/coupons" className="nav-link">Offerte</Link>
+                <Link to="/dashboard" className="nav-link">Dashboard</Link>
+                <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
+                <button onClick={logout} className="btn-subscribe">Esci</button>
+              </>
+            )}
           </div>
-        </nav>
+        </div>
+      </nav>
         <div className="loading-container">
           <div className="loading-spinner">Caricamento ricette...</div>
         </div>
@@ -125,6 +135,8 @@ const Dashboard = () => {
             {isAuthenticated && (
               <>
                 <span className="user-greeting">Benvenuto, {user?.name}!</span>
+                <Link to="/coupons" className="nav-link">Offerte</Link>
+                <Link to="/dashboard" className="nav-link active">Dashboard</Link>
                 <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
                 <button onClick={logout} className="btn-subscribe">Esci</button>
               </>
@@ -216,7 +228,7 @@ const Dashboard = () => {
                         Modifica
                       </Link>
                       <button
-                        onClick={() => handleDelete(recipe.id)}
+                        onClick={() => handleDeleteClick(recipe)}
                         className="btn-delete"
                         disabled={deletingId === recipe.id}
                       >
@@ -230,6 +242,31 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+
+      {/* Delete confirmation modal */}
+      {deleteConfirmRecipe && (
+        <div className="delete-modal-overlay" onClick={handleDeleteCancel}>
+          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-modal-header">
+              <h2>Elimina ricetta</h2>
+              <button type="button" className="delete-modal-close" onClick={handleDeleteCancel} aria-label="Chiudi">×</button>
+            </div>
+            <div className="delete-modal-body">
+              <p>Sei sicuro di voler eliminare questa ricetta?</p>
+              <p className="delete-modal-recipe-title">«{deleteConfirmRecipe.title}»</p>
+              <p className="delete-modal-warning">L'operazione non può essere annullata.</p>
+            </div>
+            <div className="delete-modal-footer">
+              <button type="button" className="btn-delete-cancel" onClick={handleDeleteCancel}>
+                Annulla
+              </button>
+              <button type="button" className="btn-delete-confirm" onClick={handleDeleteConfirm}>
+                Sì, elimina
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="footer">

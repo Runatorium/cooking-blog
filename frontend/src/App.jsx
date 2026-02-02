@@ -9,6 +9,7 @@ import HistoryPage from './components/HistoryPage'
 import StoriePage from './components/StoriePage'
 import PublishRecipe from './components/PublishRecipe'
 import EditRecipe from './components/EditRecipe'
+import CouponsPage from './components/CouponsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -43,6 +44,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/coupons"
+        element={
+          <ProtectedRoute>
+            <CouponsPage />
           </ProtectedRoute>
         }
       />

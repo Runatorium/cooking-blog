@@ -12,8 +12,14 @@
   font-weight: 400;
 
   color-scheme: light;
-  color: #213547;
-  background-color: #ffffff;
+  color: #3d3832;
+  background-color: #f2efe9;
+
+  /* Soft, eye-resting background palette */
+  --bg-page: #f2efe9;
+  --bg-surface: #faf7f2;
+  --bg-card: #fdfbf8;
+  --bg-nav: #f8f5f0;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,6 +31,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg-page);
 }
 
 a {

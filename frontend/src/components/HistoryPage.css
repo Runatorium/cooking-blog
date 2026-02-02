@@ -2,12 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #faf8f5;
+  background: var(--bg-page, #f2efe9);
 }
 
 /* Navigation - reuse from LandingPage */
 .navbar {
-  background: #fff;
+  background: var(--bg-nav, #f8f5f0);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -289,7 +289,7 @@
 }
 
 .value-card {
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   padding: 2.5rem 2rem;
   border-radius: 12px;
   text-align: center;
@@ -324,7 +324,7 @@
 
 /* CTA Section */
 .history-cta {
-  background: #fff;
+  background: var(--bg-card, #fdfbf8);
   padding: 4rem 2rem;
   border-radius: 12px;
   text-align: center;

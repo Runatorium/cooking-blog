@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import User, Recipe, Ingredient, Instruction, StoryPost, RecipeReport
+from .content_moderation import contains_inappropriate_content
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -121,6 +122,35 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     f"Dimensione attuale: {value.size / (1024 * 1024):.2f}MB"
                 )
         return value
+
+    def validate_title(self, value):
+        if contains_inappropriate_content(value):
+            raise serializers.ValidationError(
+                'Il titolo contiene espressioni non consentite. Modifica il testo e riprova.'
+            )
+        return value
+
+    def validate_description(self, value):
+        if contains_inappropriate_content(value):
+            raise serializers.ValidationError(
+                'La descrizione contiene espressioni non consentite. Modifica il testo e riprova.'
+            )
+        return value
+
+    def validate(self, attrs):
+        ingredients = attrs.get('ingredients', [])
+        instructions = attrs.get('instructions', [])
+        for i, text in enumerate(ingredients):
+            if text and contains_inappropriate_content(text):
+                raise serializers.ValidationError({
+                    'ingredients': 'Uno o più ingredienti contengono espressioni non consentite.'
+                })
+        for i, text in enumerate(instructions):
+            if text and contains_inappropriate_content(text):
+                raise serializers.ValidationError({
+                    'instructions': 'Una o più istruzioni contengono espressioni non consentite.'
+                })
+        return attrs
     
     class Meta:
         model = Recipe
@@ -190,6 +220,37 @@ class RecipeUpdateSerializer(serializers.ModelSerializer):
                     f"Dimensione attuale: {value.size / (1024 * 1024):.2f}MB"
                 )
         return value
+
+    def validate_title(self, value):
+        if contains_inappropriate_content(value):
+            raise serializers.ValidationError(
+                'Il titolo contiene espressioni non consentite. Modifica il testo e riprova.'
+            )
+        return value
+
+    def validate_description(self, value):
+        if contains_inappropriate_content(value):
+            raise serializers.ValidationError(
+                'La descrizione contiene espressioni non consentite. Modifica il testo e riprova.'
+            )
+        return value
+
+    def validate(self, attrs):
+        ingredients = attrs.get('ingredients')
+        instructions = attrs.get('instructions')
+        if ingredients is not None:
+            for text in ingredients:
+                if text and contains_inappropriate_content(text):
+                    raise serializers.ValidationError({
+                        'ingredients': 'Uno o più ingredienti contengono espressioni non consentite.'
+                    })
+        if instructions is not None:
+            for text in instructions:
+                if text and contains_inappropriate_content(text):
+                    raise serializers.ValidationError({
+                        'instructions': 'Una o più istruzioni contengono espressioni non consentite.'
+                    })
+        return attrs
     
     class Meta:
         model = Recipe
@@ -239,6 +300,13 @@ class RecipeUpdateSerializer(serializers.ModelSerializer):
 class RecipeReportSerializer(serializers.ModelSerializer):
     """Serializer for recipe reports."""
     user = UserSerializer(read_only=True)
+
+    def validate_description(self, value):
+        if value and contains_inappropriate_content(value):
+            raise serializers.ValidationError(
+                'La descrizione della segnalazione contiene espressioni non consentite.'
+            )
+        return value
     
     class Meta:
         model = RecipeReport
