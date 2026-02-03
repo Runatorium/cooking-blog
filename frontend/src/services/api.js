@@ -107,16 +107,23 @@ export const authAPI = {
 };
 
 export const recipeAPI = {
-  getRecipes: async (searchQuery = '', category = '', glutenFree = null, lactoseFree = null) => {
+  getRecipes: async (searchQuery = '', category = '', glutenFree = null, lactoseFree = null, redazioneOnly = false, orderBy = '') => {
     const params = new URLSearchParams();
     if (searchQuery) params.append('search', searchQuery);
     if (category) params.append('category', category);
     if (glutenFree !== null) params.append('gluten_free', glutenFree.toString());
     if (lactoseFree !== null) params.append('lactose_free', lactoseFree.toString());
+    if (redazioneOnly) params.append('redazione_only', 'true');
+    if (orderBy && (orderBy === 'likes' || orderBy === 'most_liked')) params.append('order_by', orderBy);
     
     const queryString = params.toString();
     const url = `/recipes/${queryString ? '?' + queryString : ''}`;
     const response = await api.get(url);
+    return response.data;
+  },
+
+  getCategoryCounts: async () => {
+    const response = await api.get('/recipes/category_counts/');
     return response.data;
   },
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { storyAPI } from '../services/api';
+import Footer from './Footer';
 import './StoriePage.css';
 
 const StoriePage = () => {
@@ -41,36 +42,6 @@ const StoriePage = () => {
 
   return (
     <div className="storie-page">
-      {/* Navigation Bar */}
-      <nav className="navbar">
-        <div className="nav-container">
-          <Link to="/" className="logo">
-            <span className="logo-icon">🍳</span>
-            <span className="logo-text">Sardegna Ricette</span>
-          </Link>
-          <div className="nav-links">
-            <Link to="/" className="nav-link">Home</Link>
-            <Link to="/recipes" className="nav-link">Ricette</Link>
-            <Link to="/history" className="nav-link">Chi Siamo</Link>
-            <Link to="/stories" className="nav-link active">Storie</Link>
-            {isAuthenticated ? (
-              <>
-                <span className="user-greeting">Benvenuto, {user?.name}!</span>
-                <Link to="/coupons" className="nav-link">Offerte</Link>
-                <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
-                <button onClick={logout} className="btn-subscribe">Esci</button>
-              </>
-            ) : (
-              <div className="auth-buttons">
-                <Link to="/login" className="btn-login">Accedi</Link>
-                <Link to="/register" className="btn-subscribe">Iscriviti</Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="storie-hero">
         <div className="container">
@@ -174,43 +145,7 @@ const StoriePage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <h3>🍳 Sardegna Ricette</h3>
-              <p>Condividiamo ricette tradizionali autentiche e tradizioni culinarie dal cuore della Sardegna.</p>
-            </div>
-            <div className="footer-links">
-              <div className="footer-column">
-                <h4>Ricette</h4>
-                <Link to="/recipes/pasta">Pasta & Risotto</Link>
-                <Link to="/recipes/bread">Pane & Pizza</Link>
-                <Link to="/recipes/soup">Zuppe & Stufati</Link>
-                <Link to="/recipes/dessert">Dolci</Link>
-              </div>
-              <div className="footer-column">
-                <h4>Chi Siamo</h4>
-                <Link to="/history">La Nostra Storia</Link>
-                <Link to="/contact">Contattaci</Link>
-              </div>
-              <div className="footer-column">
-                <h4>Seguici</h4>
-                <div className="social-icons">
-                  <a href="#" aria-label="Facebook">f</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>&copy; 2023 Sardegna Ricette. Tutti i diritti riservati.</p>
-            <div className="footer-legal">
-              <Link to="/privacy">Privacy Policy</Link>
-              <Link to="/terms">Termini di Servizio</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

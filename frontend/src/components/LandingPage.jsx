@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { recipeAPI } from '../services/api';
+import Footer from './Footer';
 import './LandingPage.css';
 
 const LandingPage = () => {
-  const { isAuthenticated, user, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [recipes, setRecipes] = useState([]);
+  const [redazioneRecipes, setRedazioneRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchRecipes();
+    fetchRedazioneRecipes();
   }, []);
 
   const fetchRecipes = async () => {
@@ -24,6 +25,16 @@ const LandingPage = () => {
       setRecipes([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRedazioneRecipes = async () => {
+    try {
+      const data = await recipeAPI.getRecipes('', '', null, null, true);
+      setRedazioneRecipes(data.results || data);
+    } catch (err) {
+      console.error('Error fetching redazione recipes:', err);
+      setRedazioneRecipes([]);
     }
   };
 
@@ -62,7 +73,8 @@ const LandingPage = () => {
   };
 
   const featuredRecipe = recipes.length > 0 ? recipes[0] : null;
-  const latestRecipes = recipes.length > 1 ? recipes.slice(1, 4) : [];
+  // Ultime Ricette Tradizionali: only from Redazione (editorial), max 3
+  const latestRecipes = redazioneRecipes.slice(0, 3);
 
   // Count recipes by category
   const getCategoryCount = (displayCategory) => {
@@ -87,40 +99,6 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      {/* Navigation Bar */}
-      <nav className="navbar">
-        <div className="nav-container">
-          <div className="logo">
-            <span className="logo-icon">🍳</span>
-            <span className="logo-text">Sardegna Ricette</span>
-          </div>
-          <div className="nav-links">
-            <Link to="/" className="nav-link">Home</Link>
-            <Link to="/recipes" className="nav-link">Ricette</Link>
-            <Link to="/history" className="nav-link">Chi Siamo</Link>
-            <Link to="/stories" className="nav-link">Storie</Link>
-            {isAuthenticated ? (
-              <>
-                <span className="user-greeting">Benvenuto, {user?.name}!</span>
-                <Link to="/coupons" className="nav-link">Offerte</Link>
-                <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
-                <button onClick={logout} className="btn-subscribe">
-                  Esci
-                </button>
-              </>
-            ) : (
-              <div className="auth-buttons">
-                <Link to="/login" className="btn-login">Accedi</Link>
-                <Link to="/register" className="btn-subscribe">
-                  Iscriviti
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-overlay"></div>
@@ -145,7 +123,7 @@ const LandingPage = () => {
             )}
           </div>
           {featuredRecipe ? (
-            <div className="featured-recipe-card">
+            <div className={`featured-recipe-card ${featuredRecipe.author?.is_redazione ? 'featured-recipe-card--redazione' : ''}`}>
               <div className="featured-recipe-image">
                 {featuredRecipe.image ? (
                   <img 
@@ -159,6 +137,7 @@ const LandingPage = () => {
               </div>
               <div className="featured-recipe-content">
                 <div className="recipe-tags">
+                  {featuredRecipe.author?.is_redazione && <span className="redazione-badge">Redazione</span>}
                   <span className="tag tag-main">{getCategoryDisplayName(featuredRecipe.category)}</span>
                   <span className="tag tag-time">🕐 {featuredRecipe.prep_time} min</span>
                   <span className="tag tag-likes">🤍 {featuredRecipe.likes_count || 0}</span>
@@ -168,15 +147,19 @@ const LandingPage = () => {
                   {featuredRecipe.description}
                 </p>
                 <div className="recipe-author">
-                  <div className="author-avatar">
-                    {featuredRecipe.author?.name ? featuredRecipe.author.name.charAt(0).toUpperCase() : 'U'}
+                  <div className={`author-avatar ${featuredRecipe.author?.is_redazione ? 'author-avatar--redazione' : ''}`} title={featuredRecipe.author?.is_redazione ? 'Redazione' : undefined}>
+                    {featuredRecipe.author?.is_redazione ? (
+                      <span className="author-avatar-redazione-icon" aria-hidden>👨‍🍳</span>
+                    ) : (
+                      featuredRecipe.author?.display_name ? featuredRecipe.author.display_name.charAt(0).toUpperCase() : (featuredRecipe.author?.name ? featuredRecipe.author.name.charAt(0).toUpperCase() : 'U')
+                    )}
                   </div>
                   <div className="author-info">
-                    <span className="author-name">{featuredRecipe.author?.name || 'Autore Sconosciuto'}</span>
+                    <span className="author-name">{featuredRecipe.author?.display_name || featuredRecipe.author?.name || 'Autore Sconosciuto'}</span>
                     <span className="recipe-date">{formatDate(featuredRecipe.created_at)}</span>
                   </div>
                 </div>
-                <Link to={`/recipe/${featuredRecipe.id}`} className="btn-view-recipe">Vedi Ricetta Completa</Link>
+                <Link to={`/recipe/${featuredRecipe.slug || featuredRecipe.id}`} className="btn-view-recipe">Vedi Ricetta Completa</Link>
               </div>
             </div>
           ) : (
@@ -214,7 +197,7 @@ const LandingPage = () => {
           <div className="recipes-grid">
             {latestRecipes.length > 0 ? (
               latestRecipes.map((recipe) => (
-                <Link key={recipe.id} to={`/recipe/${recipe.id}`} className="recipe-card">
+                <Link key={recipe.id} to={`/recipe/${recipe.slug || recipe.id}`} className={`recipe-card ${recipe.author?.is_redazione ? 'recipe-card--redazione' : ''}`}>
                   <div className={`recipe-card-image ${!recipe.image ? getImageClass(recipe.category) : ''}`}>
                     {recipe.image && (
                       <img 
@@ -225,6 +208,7 @@ const LandingPage = () => {
                   </div>
                   <div className="recipe-card-content">
                     <div className="recipe-tags">
+                      {recipe.author?.is_redazione && <span className="redazione-badge">Redazione</span>}
                       <span className={`tag tag-${recipe.category.toLowerCase().replace(' & ', '-').replace(' ', '-')}`}>
                         {getCategoryDisplayName(recipe.category)}
                       </span>
@@ -233,7 +217,7 @@ const LandingPage = () => {
                     <h4>{recipe.title}</h4>
                     <p>{recipe.description}</p>
                     <div className="recipe-card-author">
-                      <span>Di {recipe.author?.name || 'Autore Sconosciuto'} • {formatDate(recipe.created_at)}</span>
+                      <span>Di {recipe.author?.display_name || recipe.author?.name || 'Autore Sconosciuto'} • {formatDate(recipe.created_at)}</span>
                     </div>
                   </div>
                 </Link>
@@ -322,44 +306,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <h3>🍳 Sardegna Ricette</h3>
-              <p>Condividiamo ricette tradizionali autentiche e tradizioni culinarie dal cuore della Sardegna.</p>
-            </div>
-            <div className="footer-links">
-              <div className="footer-column">
-                <h4>Ricette</h4>
-                <Link to="/recipes/pasta">Pasta & Risotto</Link>
-                <Link to="/recipes/bread">Pane & Pizza</Link>
-                <Link to="/recipes/soup">Zuppe & Stufati</Link>
-                <Link to="/recipes/dessert">Dolci</Link>
-              </div>
-              <div className="footer-column">
-                <h4>Chi Siamo</h4>
-                <Link to="/history">La Nostra Storia</Link>
-                <Link to="/contact">Contattaci</Link>
-              </div>
-              <div className="footer-column">
-                <h4>Seguici</h4>
-                <div className="social-icons">
-                  <a href="#" aria-label="Facebook">f</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>&copy; 2023 Sardegna Ricette. Tutti i diritti riservati.</p>
-            <div className="footer-legal">
-              <Link to="/privacy">Privacy Policy</Link>
-              <Link to="/terms">Termini di Servizio</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

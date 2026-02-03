@@ -5,23 +5,6 @@
   background: var(--bg-page, #f2efe9);
 }
 
-/* Navigation - reuse styles */
-.navbar {
-  background: var(--bg-nav, #f8f5f0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.25rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
 .logo {
   display: flex;
@@ -92,12 +75,6 @@
 .btn-subscribe {
   background: #d2691e;
   color: #fff;
-}
-
-.btn-subscribe:hover {
-  background: #b85a1a;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(210, 105, 30, 0.3);
 }
 
 /* Main Content */

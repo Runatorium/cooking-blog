@@ -46,11 +46,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for user details."""
+    display_name = serializers.ReadOnlyField()
     
     class Meta:
         model = User
-        fields = ('id', 'email', 'name', 'date_joined', 'is_active')
-        read_only_fields = ('id', 'date_joined', 'is_active')
+        fields = ('id', 'email', 'name', 'display_name', 'is_redazione', 'date_joined', 'is_active')
+        read_only_fields = ('id', 'display_name', 'is_redazione', 'date_joined', 'is_active')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -83,12 +84,12 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'title', 'description', 'category', 'prep_time',
+            'id', 'slug', 'title', 'description', 'category', 'prep_time',
             'author', 'image', 'gluten_free', 'lactose_free',
             'created_at', 'updated_at', 'is_published',
             'ingredients', 'instructions', 'likes_count', 'is_liked'
         )
-        read_only_fields = ('id', 'author', 'created_at', 'updated_at', 'likes_count', 'is_liked')
+        read_only_fields = ('id', 'slug', 'author', 'created_at', 'updated_at', 'likes_count', 'is_liked')
     
     def get_is_liked(self, obj):
         """Check if the current user has liked this recipe."""

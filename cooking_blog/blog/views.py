@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.db.models import Q, Count
+from django.shortcuts import get_object_or_404
 import logging
 from .serializers import (
     UserRegistrationSerializer, UserSerializer,
@@ -14,6 +15,15 @@ from .serializers import (
 from .models import User, Recipe, StoryPost, RecipeLike, RecipeReport
 
 logger = logging.getLogger(__name__)
+
+
+def get_recipe_by_slug_or_id(slug_or_id, queryset=None):
+    """Resolve a recipe by numeric id or by slug. Raises Http404 if not found."""
+    if queryset is None:
+        queryset = Recipe.objects.all()
+    if slug_or_id.isdigit():
+        return get_object_or_404(queryset, pk=int(slug_or_id))
+    return get_object_or_404(queryset, slug=slug_or_id)
 
 
 @api_view(['POST'])
@@ -88,6 +98,17 @@ def me(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def recipe_category_counts(request):
+    """Return recipe count per category (unfiltered: published, not flagged). Used for category cards so counts don't change when user applies filters."""
+    queryset = Recipe.objects.filter(is_published=True).annotate(
+        report_count=Count('recipe_reports')
+    ).filter(report_count__lte=5).values('category').annotate(count=Count('id'))
+    counts = {row['category']: row['count'] for row in queryset}
+    return Response(counts, status=status.HTTP_200_OK)
+
+
 class RecipeListCreateView(generics.ListCreateAPIView):
     """List all recipes or create a new recipe."""
     queryset = Recipe.objects.filter(is_published=True).select_related('author').prefetch_related('ingredients', 'instructions')
@@ -138,7 +159,18 @@ class RecipeListCreateView(generics.ListCreateAPIView):
             lactose_free_bool = lactose_free.lower() in ('true', '1', 'yes')
             queryset = queryset.filter(lactose_free=lactose_free_bool)
         
-        return queryset.order_by('-created_at')
+        # Redazione-only: only recipes from Redazione (editorial) account
+        redazione_only = self.request.query_params.get('redazione_only', None)
+        if redazione_only is not None and redazione_only.lower() in ('true', '1', 'yes'):
+            queryset = queryset.filter(author__is_redazione=True)
+        
+        # Order by: most liked (order_by=likes or order_by=most_liked)
+        order_by = (self.request.query_params.get('order_by') or '').strip().lower()
+        if order_by in ('likes', 'most_liked'):
+            queryset = queryset.annotate(likes_count_ord=Count('recipe_likes'))
+            return queryset.order_by('-is_featured', '-likes_count_ord', '-created_at')
+        
+        return queryset.order_by('-is_featured', '-created_at')
     
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -152,15 +184,21 @@ class RecipeListCreateView(generics.ListCreateAPIView):
 
 
 class RecipeDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a single recipe."""
+    """Retrieve, update or delete a single recipe. URL accepts id or slug."""
     queryset = Recipe.objects.select_related('author').prefetch_related('ingredients', 'instructions')
     permission_classes = [AllowAny]
-    
+    lookup_url_kwarg = 'slug_or_id'
+
+    def get_object(self):
+        slug_or_id = self.kwargs.get('slug_or_id')
+        queryset = self.get_queryset()
+        return get_recipe_by_slug_or_id(slug_or_id, queryset=queryset)
+
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
             return RecipeUpdateSerializer
         return RecipeSerializer
-    
+
     def get_queryset(self):
         # For GET requests, show published recipes to anyone (excluding flagged recipes)
         # For PUT/PATCH/DELETE, show all recipes but check ownership in permissions
@@ -172,7 +210,7 @@ class RecipeDetailView(generics.RetrieveUpdateDestroyAPIView):
             ).exclude(report_count__gt=5)
             return queryset
         return Recipe.objects.select_related('author').prefetch_related('ingredients', 'instructions', 'recipe_likes', 'recipe_reports')
-    
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
@@ -214,11 +252,15 @@ class MyRecipesView(generics.ListAPIView):
 
 
 class RecipeReportView(generics.CreateAPIView):
-    """Report a recipe for inappropriate content."""
+    """Report a recipe for inappropriate content. URL accepts id or slug."""
     serializer_class = RecipeReportSerializer
     permission_classes = [IsAuthenticated]
     queryset = Recipe.objects.all()
-    
+
+    def get_object(self):
+        slug_or_id = self.kwargs.get('slug_or_id')
+        return get_recipe_by_slug_or_id(slug_or_id, queryset=self.get_queryset())
+
     def perform_create(self, serializer):
         recipe = self.get_object()
         user = self.request.user
@@ -244,11 +286,15 @@ class RecipeReportView(generics.CreateAPIView):
 
 
 class RecipeLikeView(generics.GenericAPIView):
-    """Toggle like on a recipe."""
+    """Toggle like on a recipe. URL accepts id or slug."""
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthenticated]
-    
-    def post(self, request, pk):
+
+    def get_object(self):
+        slug_or_id = self.kwargs.get('slug_or_id')
+        return get_recipe_by_slug_or_id(slug_or_id, queryset=self.get_queryset())
+
+    def post(self, request, slug_or_id):
         """Add or remove a like from a recipe."""
         recipe = self.get_object()
         user = request.user

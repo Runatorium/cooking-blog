@@ -13,10 +13,11 @@ urlpatterns = [
     
     # Recipe endpoints
     path('recipes/', views.RecipeListCreateView.as_view(), name='recipe-list-create'),
-    path('recipes/<int:pk>/', views.RecipeDetailView.as_view(), name='recipe-detail'),
-    path('recipes/<int:pk>/like/', views.RecipeLikeView.as_view(), name='recipe-like'),
-    path('recipes/<int:pk>/report/', views.RecipeReportView.as_view(), name='recipe-report'),
+    path('recipes/category_counts/', views.recipe_category_counts, name='recipe-category-counts'),
     path('recipes/my/', views.MyRecipesView.as_view(), name='my-recipes'),
+    path('recipes/<str:slug_or_id>/', views.RecipeDetailView.as_view(), name='recipe-detail'),
+    path('recipes/<str:slug_or_id>/like/', views.RecipeLikeView.as_view(), name='recipe-like'),
+    path('recipes/<str:slug_or_id>/report/', views.RecipeReportView.as_view(), name='recipe-report'),
     
     # Story endpoints
     path('stories/', views.StoryPostListView.as_view(), name='story-list'),

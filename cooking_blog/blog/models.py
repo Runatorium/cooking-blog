@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
+from django.utils.text import slugify
 
 
 class UserManager(BaseUserManager):
@@ -36,6 +37,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_redazione = models.BooleanField(
+        default=False,
+        help_text="Profilo Redazione: le ricette pubblicate appariranno con autore 'Redazione'."
+    )
     date_joined = models.DateTimeField(default=timezone.now)
     
     objects = UserManager()
@@ -55,6 +60,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def get_short_name(self):
         return self.name
+    
+    @property
+    def display_name(self):
+        """Public display name: 'Redazione' for editorial account, else user's name."""
+        return "Redazione" if self.is_redazione else self.name
 
 
 class Recipe(models.Model):
@@ -69,6 +79,7 @@ class Recipe(models.Model):
     ]
     
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
     description = models.TextField()
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     prep_time = models.IntegerField(help_text="Prep time in minutes")
@@ -79,6 +90,11 @@ class Recipe(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name="In evidenza",
+        help_text="Ricetta in evidenza: mostrata in homepage. Solo una ricetta può essere in evidenza."
+    )
     liked_by = models.ManyToManyField(User, through='RecipeLike', related_name='liked_recipes', blank=True)
     
     class Meta:
@@ -88,6 +104,19 @@ class Recipe(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            Recipe.objects.filter(is_featured=True).exclude(pk=self.pk).update(is_featured=False)
+        if not self.slug and self.title:
+            base = slugify(self.title) or 'recipe'
+            slug = base
+            n = 1
+            while Recipe.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f'{base}-{n}'
+                n += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
     
     @property
     def likes_count(self):

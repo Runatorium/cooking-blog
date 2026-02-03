@@ -5,102 +5,6 @@
   background: var(--bg-page, #f2efe9);
 }
 
-/* Navigation - reuse styles */
-.navbar {
-  background: var(--bg-nav, #f8f5f0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.25rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #8b4513;
-  font-family: 'Georgia', serif;
-  text-decoration: none;
-}
-
-.logo-icon {
-  font-size: 1.75rem;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.nav-link {
-  color: #5a4a3a;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: color 0.3s;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: #d2691e;
-}
-
-.user-greeting {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.btn-publish,
-.btn-subscribe {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  line-height: 1.2;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s;
-  box-sizing: border-box;
-  height: auto;
-}
-
-.btn-publish {
-  background: #5a4a3a;
-  color: #fff;
-}
-
-.btn-publish:hover,
-.btn-publish.active {
-  background: #4a3a2a;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(90, 74, 58, 0.3);
-}
-
-.btn-subscribe {
-  background: #d2691e;
-  color: #fff;
-}
-
-.btn-subscribe:hover {
-  background: #b85a1a;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(210, 105, 30, 0.3);
-}
-
 /* Main Content */
 .publish-main {
   flex: 1;
@@ -502,6 +406,11 @@
   text-align: center;
   background: var(--bg-surface, #faf7f2);
   transition: all 0.3s;
+  overflow: hidden;
+  max-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .image-upload-box:hover {
@@ -524,6 +433,17 @@
 .upload-hint {
   font-size: 0.85rem;
   color: #999;
+}
+
+/* Preview img: must never overflow the upload box */
+.image-upload-box img.image-preview {
+  max-width: 100%;
+  max-height: 360px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
 }
 
 .image-preview {
@@ -782,6 +702,18 @@
     gap: 1rem;
   }
 
+  .dietary-options {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .checkbox-label {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .form-actions {
     flex-direction: column-reverse;
   }
@@ -800,6 +732,14 @@
 
   .publish-form {
     padding: 1.5rem 1rem;
+  }
+
+  .dietary-options {
+    gap: 0.75rem;
+  }
+
+  .checkbox-label {
+    padding: 0.75rem 1rem;
   }
 
   .section-title {

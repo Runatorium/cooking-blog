@@ -1,17 +1,26 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { recipeAPI } from '../services/api';
+import Footer from './Footer';
 import './BlogPage.css';
 
 const BlogPage = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [filterGlutenFree, setFilterGlutenFree] = useState(false);
+  const [filterLactoseFree, setFilterLactoseFree] = useState(false);
+  const [filterRedazione, setFilterRedazione] = useState(false);
+  const [orderBy, setOrderBy] = useState(''); // '' = newest, 'most_liked' = most liked
   const [recipes, setRecipes] = useState([]);
+  const [categoryCounts, setCategoryCounts] = useState({}); // unfiltered counts per backend category
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [error, setError] = useState('');
   const [likingIds, setLikingIds] = useState(new Set());
+  const initialLoadDone = useRef(false);
+  const [searchParams] = useSearchParams();
 
   // Map Italian category names to backend category values
   const categoryMap = {
@@ -21,6 +30,7 @@ const BlogPage = () => {
     'Dolci': 'Desserts',
     'Pesce': 'Fish',
   };
+  const validCategoryNames = Object.keys(categoryMap);
 
   // Reverse map for display
   const reverseCategoryMap = {
@@ -31,38 +41,55 @@ const BlogPage = () => {
     'Fish': 'Pesce',
   };
 
-  const fetchRecipes = async (search = '', category = '') => {
+  const fetchRecipes = async (search = '', category = '', glutenFree = null, lactoseFree = null, redazioneOnly = false, orderByParam = '', silent = false) => {
     try {
-      setLoading(true);
+      if (silent) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
       setError('');
       const backendCategory = category ? categoryMap[category] || category : '';
-      const data = await recipeAPI.getRecipes(search, backendCategory);
-      setRecipes(data.results || data); // Handle both paginated and non-paginated responses
+      const data = await recipeAPI.getRecipes(search, backendCategory, glutenFree, lactoseFree, redazioneOnly, orderByParam);
+      setRecipes(data.results || data);
     } catch (err) {
       setError('Impossibile caricare le ricette. Riprova più tardi.');
       console.error('Error fetching recipes:', err);
     } finally {
-      setLoading(false);
+      if (silent) {
+        setSearching(false);
+      } else {
+        setLoading(false);
+        initialLoadDone.current = true;
+      }
     }
   };
 
   useEffect(() => {
-    // Initial load
-    fetchRecipes('', '');
+    const categoryFromUrl = searchParams.get('category');
+    const category = validCategoryNames.includes(categoryFromUrl || '') ? categoryFromUrl : '';
+    if (category) setSelectedCategory(category);
+    fetchRecipes('', category, null, null, false, '', false);
+    recipeAPI.getCategoryCounts().then(setCategoryCounts).catch(() => setCategoryCounts({}));
   }, []);
 
+  // Sync URL category to state when navigating (e.g. from footer links)
   useEffect(() => {
-    // Fetch recipes when category changes
-    fetchRecipes(searchQuery, selectedCategory);
-  }, [selectedCategory]);
+    const categoryFromUrl = searchParams.get('category');
+    const category = validCategoryNames.includes(categoryFromUrl || '') ? categoryFromUrl : '';
+    setSelectedCategory(category);
+  }, [searchParams]);
 
   useEffect(() => {
-    // Debounce search query
+    if (!initialLoadDone.current) return;
+    const glutenFree = filterGlutenFree ? true : null;
+    const lactoseFree = filterLactoseFree ? true : null;
+    const ms = searchQuery ? 650 : 0;
     const timeoutId = setTimeout(() => {
-      fetchRecipes(searchQuery, selectedCategory);
-    }, 500);
+      fetchRecipes(searchQuery, selectedCategory, glutenFree, lactoseFree, filterRedazione, orderBy, true);
+    }, ms);
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  }, [searchQuery, selectedCategory, filterGlutenFree, filterLactoseFree, filterRedazione, orderBy]);
 
   const handleCategoryClick = (category) => {
     if (selectedCategory === category) {
@@ -102,21 +129,10 @@ const BlogPage = () => {
     }
   };
 
-  // Count recipes by category
+  // Count recipes by category (from unfiltered backend counts so cards don't change when filters are applied)
   const getCategoryCount = (category) => {
     const backendCategory = categoryMap[category];
-    if (recipes.length === 0) {
-      // Return placeholder counts when no recipes
-      const placeholderCounts = {
-        'Pane & Pizza': 24,
-        'Primi Piatti': 38,
-        'Carne & Pollame': 31,
-        'Dolci': 27,
-        'Pesce': 19,
-      };
-      return placeholderCounts[category] || 0;
-    }
-    return recipes.filter(r => r.category === backendCategory).length;
+    return categoryCounts[backendCategory] ?? 0;
   };
 
   // Format date helper
@@ -210,45 +226,24 @@ const BlogPage = () => {
       filtered = filtered.filter(recipe =>
         recipe.title.toLowerCase().includes(query) ||
         recipe.description.toLowerCase().includes(query) ||
-        (recipe.author?.name && recipe.author.name.toLowerCase().includes(query))
+        ((recipe.author?.name && recipe.author.name.toLowerCase().includes(query)) ||
+         (recipe.author?.display_name && recipe.author.display_name.toLowerCase().includes(query)))
       );
     }
 
     return filtered;
   }, [recipes, selectedCategory, searchQuery]);
 
+  // Display order: first up to 3 from Redazione that match filters, then the rest
+  const orderedPosts = useMemo(() => {
+    const redazioneFirst = filteredPosts.filter(r => r.author?.is_redazione).slice(0, 3);
+    const redazioneIds = new Set(redazioneFirst.map(r => r.id));
+    const rest = filteredPosts.filter(r => !redazioneIds.has(r.id));
+    return [...redazioneFirst, ...rest];
+  }, [filteredPosts]);
+
   return (
     <div className="blog-page">
-      {/* Navigation Bar */}
-      <nav className="navbar">
-        <div className="nav-container">
-          <Link to="/" className="logo">
-            <span className="logo-icon">🍳</span>
-            <span className="logo-text">Sardegna Ricette</span>
-          </Link>
-          <div className="nav-links">
-            <Link to="/" className="nav-link">Home</Link>
-            <Link to="/recipes" className="nav-link active">Ricette</Link>
-            <Link to="/history" className="nav-link">Chi Siamo</Link>
-            <Link to="/stories" className="nav-link">Storie</Link>
-            {isAuthenticated ? (
-              <>
-                <span className="user-greeting">Benvenuto, {user?.name}!</span>
-                <Link to="/coupons" className="nav-link">Offerte</Link>
-                <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                <Link to="/publish" className="btn-publish">Pubblica una Ricetta</Link>
-                <button onClick={logout} className="btn-subscribe">Esci</button>
-              </>
-            ) : (
-              <div className="auth-buttons">
-                <Link to="/login" className="btn-login">Accedi</Link>
-                <Link to="/register" className="btn-subscribe">Iscriviti</Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
       {/* Main Content */}
       <main className="blog-main">
         <div className="blog-container">
@@ -318,7 +313,7 @@ const BlogPage = () => {
 
           {/* Search Section */}
           <section className="search-section">
-            <div className="search-container">
+            <div className={`search-container ${searching ? 'search-container--searching' : ''}`}>
               <span className="search-icon">🔍</span>
               <input
                 type="text"
@@ -327,7 +322,8 @@ const BlogPage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {searchQuery && (
+              {searching && <span className="searching-indicator" aria-hidden>Cercando...</span>}
+              {searchQuery && !searching && (
                 <button
                   className="search-clear"
                   onClick={() => setSearchQuery('')}
@@ -337,9 +333,55 @@ const BlogPage = () => {
                 </button>
               )}
             </div>
-            {searchQuery && (
+            <div className="search-diet-filters">
+              <label className="search-diet-checkbox">
+                <input
+                  type="checkbox"
+                  checked={filterGlutenFree}
+                  onChange={(e) => setFilterGlutenFree(e.target.checked)}
+                  className="search-diet-input"
+                />
+                <span className="search-diet-label">🌾 Senza glutine</span>
+              </label>
+              <label className="search-diet-checkbox">
+                <input
+                  type="checkbox"
+                  checked={filterLactoseFree}
+                  onChange={(e) => setFilterLactoseFree(e.target.checked)}
+                  className="search-diet-input"
+                />
+                <span className="search-diet-label">🥛 Senza lattosio</span>
+              </label>
+              <label className="search-diet-checkbox">
+                <input
+                  type="checkbox"
+                  checked={filterRedazione}
+                  onChange={(e) => setFilterRedazione(e.target.checked)}
+                  className="search-diet-input"
+                />
+                <span className="search-diet-label">👨‍🍳 Solo Redazione</span>
+              </label>
+            </div>
+            <div className="search-order-by">
+              <span className="search-order-label">Ordina per:</span>
+              <button
+                type="button"
+                className={`search-order-btn ${orderBy === '' ? 'active' : ''}`}
+                onClick={() => setOrderBy('')}
+              >
+                Più recenti
+              </button>
+              <button
+                type="button"
+                className={`search-order-btn ${orderBy === 'most_liked' ? 'active' : ''}`}
+                onClick={() => setOrderBy(orderBy === 'most_liked' ? '' : 'most_liked')}
+              >
+                Più piaciute
+              </button>
+            </div>
+            {searchQuery && !searching && (
               <div className="search-results-info">
-                {filteredPosts.length} risultato{filteredPosts.length !== 1 ? 'i' : ''} trovato{filteredPosts.length !== 1 ? 'i' : ''} per "{searchQuery}"
+                {orderedPosts.length} risultato{orderedPosts.length !== 1 ? 'i' : ''} trovato{orderedPosts.length !== 1 ? 'i' : ''} per "{searchQuery}"
               </div>
             )}
           </section>
@@ -355,16 +397,16 @@ const BlogPage = () => {
           {error && !loading && (
             <div className="error-container">
               <p>{error}</p>
-              <button onClick={() => fetchRecipes(searchQuery, selectedCategory)} className="btn-retry">Riprova</button>
+              <button onClick={() => fetchRecipes(searchQuery, selectedCategory, filterGlutenFree ? true : null, filterLactoseFree ? true : null, filterRedazione, orderBy, false)} className="btn-retry">Riprova</button>
             </div>
           )}
 
-          {/* Blog Posts Grid */}
-          {!loading && !error && (filteredPosts.length > 0 || recipes.length === 0) && (
-            <div className="blog-posts">
-              {filteredPosts.length > 0 ? (
-                filteredPosts.map((recipe) => (
-                  <article key={recipe.id} className="blog-post-card">
+          {/* Blog Posts Grid - stay visible while searching, only hide on initial load */}
+          {!loading && !error && (orderedPosts.length > 0 || recipes.length === 0) && (
+            <div className={`blog-posts ${searching ? 'blog-posts--searching' : ''}`}>
+              {orderedPosts.length > 0 ? (
+                orderedPosts.map((recipe) => (
+                  <article key={recipe.id} className={`blog-post-card ${recipe.author?.is_redazione ? 'blog-post-card--redazione' : ''}`}>
                     <div className="post-image">
                       {recipe.image ? (
                         <img 
@@ -378,6 +420,7 @@ const BlogPage = () => {
                     </div>
                     <div className="post-content">
                       <div className="post-meta">
+                        {recipe.author?.is_redazione && <span className="redazione-badge">Redazione</span>}
                         <span className="post-category">{reverseCategoryMap[recipe.category] || recipe.category}</span>
                         <span className="post-date">{formatDate(recipe.created_at)}</span>
                       </div>
@@ -385,7 +428,7 @@ const BlogPage = () => {
                       <p className="post-excerpt">{recipe.description}</p>
                       <div className="post-footer">
                         <div className="post-author">
-                          <span className="author-name">{recipe.author?.name || 'Unknown'}</span>
+                          <span className="author-name">{recipe.author?.display_name || recipe.author?.name || 'Unknown'}</span>
                           <span className="read-time">{recipe.prep_time} min prep</span>
                         </div>
                         <div className="post-actions">
@@ -410,7 +453,7 @@ const BlogPage = () => {
                               <span className="like-count-small">{recipe.likes_count || 0}</span>
                             </div>
                           )}
-                          <Link to={`/recipe/${recipe.id}`} className="read-more">
+                          <Link to={`/recipe/${recipe.slug || recipe.id}`} className="read-more">
                             Leggi di Più →
                           </Link>
                         </div>
@@ -455,7 +498,7 @@ const BlogPage = () => {
           )}
 
           {/* No Results */}
-          {!loading && !error && filteredPosts.length === 0 && recipes.length > 0 && (
+          {!loading && !error && orderedPosts.length === 0 && recipes.length > 0 && (
             <div className="no-results">
               <div className="no-results-icon">🔍</div>
               <h2>
@@ -500,44 +543,7 @@ const BlogPage = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <h3>🍳 Sardegna Ricette</h3>
-              <p>Condividiamo ricette tradizionali autentiche e tradizioni culinarie dal cuore della Sardegna.</p>
-            </div>
-            <div className="footer-links">
-              <div className="footer-column">
-                <h4>Ricette</h4>
-                <Link to="/recipes/pasta">Pasta & Risotto</Link>
-                <Link to="/recipes/bread">Pane & Pizza</Link>
-                <Link to="/recipes/soup">Zuppe & Stufati</Link>
-                <Link to="/recipes/dessert">Dolci</Link>
-              </div>
-              <div className="footer-column">
-                <h4>Chi Siamo</h4>
-                <Link to="/history">La Nostra Storia</Link>
-                <Link to="/contact">Contattaci</Link>
-              </div>
-              <div className="footer-column">
-                <h4>Seguici</h4>
-                <div className="social-icons">
-                  <a href="#" aria-label="Facebook">f</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>&copy; 2023 Sardegna Ricette. Tutti i diritti riservati.</p>
-            <div className="footer-legal">
-              <Link to="/privacy">Privacy Policy</Link>
-              <Link to="/terms">Termini di Servizio</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

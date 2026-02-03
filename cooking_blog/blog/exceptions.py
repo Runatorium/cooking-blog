@@ -15,9 +15,15 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     
     if response is not None:
-        # Log the full error for debugging
-        logger.error(f"API Error: {exc}")
-        logger.error(f"Context: {context}")
+        request = context.get("request")
+        path = getattr(request, "path", "") or ""
+        is_auth_401 = response.status_code == 401 and "/api/auth/" in path
+        if is_auth_401:
+            # Expected when access token is expired and client will refresh
+            logger.info("Unauthorized on %s (token refresh expected)", path)
+        else:
+            logger.error(f"API Error: {exc}")
+            logger.error(f"Context: {context}")
         
         # Customize the response data
         custom_response_data = {
