@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { recipeAPI } from '../services/api';
+import { recipeAPI, MEDIA_BASE_URL } from '../services/api';
 import Footer from './Footer';
 import SEO from './SEO';
 import RecipeStructuredData from './RecipeStructuredData';
@@ -149,7 +149,7 @@ const RecipeDetail = () => {
   }
 
   const recipeImage = recipe.image 
-    ? (recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`)
+    ? (recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`)
     : null;
   
   const categoryDisplayName = getCategoryDisplayName(recipe.category);
@@ -237,7 +237,7 @@ const RecipeDetail = () => {
           <div className="recipe-image-section">
             {recipe.image ? (
               <img 
-                src={recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`}
+                src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
                 alt={recipe.title}
                 className="recipe-main-image"
               />

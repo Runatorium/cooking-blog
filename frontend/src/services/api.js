@@ -20,6 +20,9 @@ function normalizeApiBaseUrl(value) {
 }
 const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_URL);
 
+// Backend origin (no /api) — for media URLs (uploaded images)
+export const MEDIA_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '');
+
 // Create axios instance with default config
 const api = axios.create({
   baseURL: API_BASE_URL,

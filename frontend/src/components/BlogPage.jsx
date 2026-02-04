@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { recipeAPI } from '../services/api';
+import { recipeAPI, MEDIA_BASE_URL } from '../services/api';
 import Footer from './Footer';
 import SEO from './SEO';
 import './BlogPage.css';
@@ -439,7 +439,7 @@ const BlogPage = () => {
                     <div className="post-image">
                       {recipe.image ? (
                         <img 
-                          src={recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`}
+                          src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
                           alt={recipe.title}
                           className="post-image-img"
                         />

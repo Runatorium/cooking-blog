@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { recipeAPI } from '../services/api';
+import { recipeAPI, MEDIA_BASE_URL } from '../services/api';
 import Footer from './Footer';
 import './Dashboard.css';
 
@@ -169,7 +169,7 @@ const Dashboard = () => {
                   <div className="recipe-card-image-wrapper">
                     {recipe.image ? (
                       <img
-                        src={recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`}
+                        src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
                         alt={recipe.title}
                         className="recipe-card-img"
                       />

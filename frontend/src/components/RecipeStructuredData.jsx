@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { MEDIA_BASE_URL } from '../services/api';
 
 /**
  * Component to add Recipe structured data (Schema.org) for SEO
@@ -10,7 +11,7 @@ const RecipeStructuredData = ({ recipe }) => {
     const baseUrl = import.meta.env.VITE_BASE_URL || window.location.origin;
     const recipeUrl = `${baseUrl}/recipe/${recipe.slug || recipe.id}`;
     const imageUrl = recipe.image 
-      ? (recipe.image.startsWith('http') ? recipe.image : `${baseUrl}${recipe.image}`)
+      ? (recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`)
       : `${baseUrl}/recipe-placeholder.jpg`;
     
     // Format ingredients array

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { recipeAPI } from '../services/api';
+import { recipeAPI, MEDIA_BASE_URL } from '../services/api';
 import Footer from './Footer';
 import SEO from './SEO';
 import './LandingPage.css';
@@ -133,7 +133,7 @@ const LandingPage = () => {
               <div className="featured-recipe-image">
                 {featuredRecipe.image ? (
                   <img 
-                    src={featuredRecipe.image.startsWith('http') ? featuredRecipe.image : `http://localhost:8000${featuredRecipe.image}`}
+                    src={featuredRecipe.image.startsWith('http') ? featuredRecipe.image : `${MEDIA_BASE_URL}${featuredRecipe.image}`}
                     alt={featuredRecipe.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -207,7 +207,7 @@ const LandingPage = () => {
                   <div className={`recipe-card-image ${!recipe.image ? getImageClass(recipe.category) : ''}`}>
                     {recipe.image && (
                       <img 
-                        src={recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`}
+                        src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
                         alt={recipe.title}
                       />
                     )}

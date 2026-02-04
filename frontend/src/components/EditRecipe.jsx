@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { recipeAPI } from '../services/api';
+import { recipeAPI, MEDIA_BASE_URL } from '../services/api';
 import Footer from './Footer';
 import './PublishRecipe.css';
 
@@ -77,8 +77,8 @@ const EditRecipe = () => {
       });
 
       if (recipe.image) {
-        setOldImageUrl(recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`);
-        setImagePreview(recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`);
+        setOldImageUrl(recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`);
+        setImagePreview(recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`);
       }
     } catch (err) {
       setError('Impossibile caricare la ricetta. Riprova più tardi.');

@@ -101,9 +101,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files
+# Media files (uploads). Use persistent disk on Render so uploads survive redeploys.
+RENDER_DISK_PATH = os.environ.get('RENDER_DISK_PATH')
+if RENDER_DISK_PATH:
+    MEDIA_ROOT = Path(RENDER_DISK_PATH) / 'media'
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # WhiteNoise configuration for static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
