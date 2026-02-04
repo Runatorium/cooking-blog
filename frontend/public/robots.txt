@@ -19,5 +19,5 @@ Allow: /stories
 Allow: /privacy
 Allow: /terms
 
-# Sitemap (update with your backend URL)
-Sitemap: https://your-backend-url.onrender.com/api/sitemap.xml
+# Sitemap
+Sitemap: https://api.sardegnaricette.it/api/sitemap.xml
