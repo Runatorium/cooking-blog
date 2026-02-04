@@ -32,7 +32,7 @@ services:
           property: host
 
   # PostgreSQL Database
-  - type: pspg
+  - type: pg
     name: sardegna-ricette-db
     plan: free
     databaseName: sardegna_ricette
