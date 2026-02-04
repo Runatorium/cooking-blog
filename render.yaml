@@ -8,8 +8,7 @@ services:
       pip install -r requirements.txt
       cd frontend && npm install && npm run build && cd ..
       cd cooking_blog && python manage.py collectstatic --no-input
-    startCommand: |
-      cd cooking_blog && python manage.py migrate --no-input && gunicorn cooking_blog.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile - --error-logfile -
+    startCommand: cd cooking_blog && gunicorn cooking_blog.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --access-logfile - --error-logfile -
     envVars:
       - key: DJANGO_ENV
         value: production
