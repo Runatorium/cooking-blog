@@ -16,27 +16,20 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: False
+        value: "False"
       - key: DATABASE_URL
         fromDatabase:
           name: sardegna-ricette-db
           property: connectionString
       - key: FRONTEND_URL
-        value: https://sardegna-ricette.onrender.com
+        sync: false
       - key: CORS_ALLOWED_ORIGINS
-        value: https://sardegna-ricette.onrender.com
+        sync: false
       - key: RENDER_EXTERNAL_HOSTNAME
         fromService:
           type: web
           name: sardegna-ricette-backend
           property: host
-
-  # PostgreSQL Database
-  - type: pg
-    name: sardegna-ricette-db
-    plan: free
-    databaseName: sardegna_ricette
-    user: sardegna_ricette_user
 
   # React Frontend Service (Static Site)
   - type: web
@@ -50,3 +43,9 @@ services:
           type: web
           name: sardegna-ricette-backend
           property: host
+
+databases:
+  # PostgreSQL Database
+  - name: sardegna-ricette-db
+    databaseName: sardegna_ricette
+    user: sardegna_ricette_user
