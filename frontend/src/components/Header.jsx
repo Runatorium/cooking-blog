@@ -13,13 +13,17 @@ const Header = () => {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="logo">
-          <span className="logo-icon">🍳</span>
-          <span className="logo-text">Sardegna Ricette</span>
-        </Link>
-        {!isAuthenticated && (
-          <Link to="/login" className="nav-accedi-mobile btn-login">Accedi</Link>
-        )}
+        <div className="logo-section">
+          <Link to="/" className="logo" onClick={() => setMenuOpen(false)}>
+            <span className="logo-icon">🍳</span>
+            <span className="logo-text">
+              Sardegna Ricette<span className="logo-subtitle"> e non solo</span>
+            </span>
+          </Link>
+          {isAuthenticated && (
+            <span className="user-greeting">Benvenuto, {user?.name}!</span>
+          )}
+        </div>
         <button
           type="button"
           className="nav-toggle"
@@ -35,10 +39,12 @@ const Header = () => {
           <Link to="/stories" className={`nav-link ${isActive('/stories') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Storie</Link>
           {isAuthenticated ? (
             <>
-              <span className="user-greeting">Benvenuto, {user?.name}!</span>
               <Link to="/coupons" className={`nav-link ${isActive('/coupons') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Offerte</Link>
               <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Dashboard</Link>
-              <Link to="/publish" className="btn-publish" onClick={() => setMenuOpen(false)}>Pubblica una Ricetta</Link>
+              <Link to="/publish" className="btn-publish" onClick={() => setMenuOpen(false)}>
+                <span className="btn-publish-text-full">Pubblica una Ricetta</span>
+                <span className="btn-publish-text-mobile">Pubblica</span>
+              </Link>
               <button type="button" onClick={() => { setMenuOpen(false); logout(); }} className="btn-subscribe">Esci</button>
             </>
           ) : (

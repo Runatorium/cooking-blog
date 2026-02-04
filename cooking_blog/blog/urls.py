@@ -22,4 +22,7 @@ urlpatterns = [
     # Story endpoints
     path('stories/', views.StoryPostListView.as_view(), name='story-list'),
     path('stories/<int:pk>/', views.StoryPostDetailView.as_view(), name='story-detail'),
+    
+    # SEO endpoints
+    path('sitemap.xml', views.sitemap, name='sitemap'),
 ]

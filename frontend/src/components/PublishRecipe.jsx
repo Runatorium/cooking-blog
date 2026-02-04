@@ -15,6 +15,7 @@ const PublishRecipe = () => {
     prepTime: '',
     glutenFree: false,
     lactoseFree: false,
+    isSardinian: false,
     finalComment: '',
     ingredients: [''],
     instructions: [''],
@@ -251,6 +252,23 @@ const PublishRecipe = () => {
                   min="1"
                   placeholder="60"
                 />
+              </div>
+            </div>
+
+            {/* Recipe Origin */}
+            <div className="form-section">
+              <h2 className="section-title">Origine della Ricetta</h2>
+              <div className="dietary-options">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="isSardinian"
+                    checked={formData.isSardinian}
+                    onChange={handleChange}
+                  />
+                  <span className="checkbox-icon">🏝️</span>
+                  <span className="checkbox-text">Ricetta Sarda</span>
+                </label>
               </div>
             </div>
 

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { recipeAPI } from '../services/api';
 import Footer from './Footer';
+import SEO from './SEO';
 import './BlogPage.css';
 
 const BlogPage = () => {
@@ -11,6 +12,7 @@ const BlogPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filterGlutenFree, setFilterGlutenFree] = useState(false);
   const [filterLactoseFree, setFilterLactoseFree] = useState(false);
+  const [filterSardinian, setFilterSardinian] = useState(false);
   const [filterRedazione, setFilterRedazione] = useState(false);
   const [orderBy, setOrderBy] = useState(''); // '' = newest, 'most_liked' = most liked
   const [recipes, setRecipes] = useState([]);
@@ -41,7 +43,7 @@ const BlogPage = () => {
     'Fish': 'Pesce',
   };
 
-  const fetchRecipes = async (search = '', category = '', glutenFree = null, lactoseFree = null, redazioneOnly = false, orderByParam = '', silent = false) => {
+  const fetchRecipes = async (search = '', category = '', glutenFree = null, lactoseFree = null, isSardinian = null, redazioneOnly = false, orderByParam = '', silent = false) => {
     try {
       if (silent) {
         setSearching(true);
@@ -50,7 +52,7 @@ const BlogPage = () => {
       }
       setError('');
       const backendCategory = category ? categoryMap[category] || category : '';
-      const data = await recipeAPI.getRecipes(search, backendCategory, glutenFree, lactoseFree, redazioneOnly, orderByParam);
+      const data = await recipeAPI.getRecipes(search, backendCategory, glutenFree, lactoseFree, isSardinian, redazioneOnly, orderByParam);
       setRecipes(data.results || data);
     } catch (err) {
       setError('Impossibile caricare le ricette. Riprova più tardi.');
@@ -69,7 +71,7 @@ const BlogPage = () => {
     const categoryFromUrl = searchParams.get('category');
     const category = validCategoryNames.includes(categoryFromUrl || '') ? categoryFromUrl : '';
     if (category) setSelectedCategory(category);
-    fetchRecipes('', category, null, null, false, '', false);
+    fetchRecipes('', category, null, null, null, false, '', false);
     recipeAPI.getCategoryCounts().then(setCategoryCounts).catch(() => setCategoryCounts({}));
   }, []);
 
@@ -84,12 +86,13 @@ const BlogPage = () => {
     if (!initialLoadDone.current) return;
     const glutenFree = filterGlutenFree ? true : null;
     const lactoseFree = filterLactoseFree ? true : null;
+    const isSardinian = filterSardinian ? true : null;
     const ms = searchQuery ? 650 : 0;
     const timeoutId = setTimeout(() => {
-      fetchRecipes(searchQuery, selectedCategory, glutenFree, lactoseFree, filterRedazione, orderBy, true);
+      fetchRecipes(searchQuery, selectedCategory, glutenFree, lactoseFree, isSardinian, filterRedazione, orderBy, true);
     }, ms);
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedCategory, filterGlutenFree, filterLactoseFree, filterRedazione, orderBy]);
+  }, [searchQuery, selectedCategory, filterGlutenFree, filterLactoseFree, filterSardinian, filterRedazione, orderBy]);
 
   const handleCategoryClick = (category) => {
     if (selectedCategory === category) {
@@ -242,8 +245,25 @@ const BlogPage = () => {
     return [...redazioneFirst, ...rest];
   }, [filteredPosts]);
 
+  const categoryName = selectedCategory 
+    ? (categoryMap[selectedCategory] || selectedCategory)
+    : null;
+  
+  const seoTitle = categoryName 
+    ? `Ricette ${categoryName} - Sardegna Ricette e non solo`
+    : 'Ricette Tradizionali Sarde - Sardegna Ricette e non solo';
+  
+  const seoDescription = categoryName
+    ? `Scopri le migliori ricette ${String(categoryName).toLowerCase()} tradizionali sarde. Ricette autentiche tramandate di generazione in generazione.`
+    : 'Esplora la collezione completa di ricette tradizionali sarde. Ricette senza glutine, senza lattosio, primi piatti, dolci e molto altro dalla cucina sarda.';
+
   return (
     <div className="blog-page">
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        keywords={`ricette sarde, ${categoryName ? String(categoryName).toLowerCase() : 'cucina tradizionale sarda'}, ricette senza glutine, ricette senza lattosio`}
+      />
       {/* Main Content */}
       <main className="blog-main">
         <div className="blog-container">
@@ -355,6 +375,15 @@ const BlogPage = () => {
               <label className="search-diet-checkbox">
                 <input
                   type="checkbox"
+                  checked={filterSardinian}
+                  onChange={(e) => setFilterSardinian(e.target.checked)}
+                  className="search-diet-input"
+                />
+                <span className="search-diet-label">🏝️ Ricette Sarde</span>
+              </label>
+              <label className="search-diet-checkbox">
+                <input
+                  type="checkbox"
                   checked={filterRedazione}
                   onChange={(e) => setFilterRedazione(e.target.checked)}
                   className="search-diet-input"
@@ -397,7 +426,7 @@ const BlogPage = () => {
           {error && !loading && (
             <div className="error-container">
               <p>{error}</p>
-              <button onClick={() => fetchRecipes(searchQuery, selectedCategory, filterGlutenFree ? true : null, filterLactoseFree ? true : null, filterRedazione, orderBy, false)} className="btn-retry">Riprova</button>
+              <button onClick={() => fetchRecipes(searchQuery, selectedCategory, filterGlutenFree ? true : null, filterLactoseFree ? true : null, filterSardinian ? true : null, filterRedazione, orderBy, false)} className="btn-retry">Riprova</button>
             </div>
           )}
 

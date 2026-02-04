@@ -87,6 +87,7 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to='recipes/', blank=True, null=True)
     gluten_free = models.BooleanField(default=False, help_text="Ricetta senza glutine")
     lactose_free = models.BooleanField(default=False, help_text="Ricetta senza lattosio")
+    is_sardinian = models.BooleanField(default=False, help_text="Ricetta tradizionale sarda")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)

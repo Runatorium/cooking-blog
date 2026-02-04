@@ -159,6 +159,12 @@ class RecipeListCreateView(generics.ListCreateAPIView):
             lactose_free_bool = lactose_free.lower() in ('true', '1', 'yes')
             queryset = queryset.filter(lactose_free=lactose_free_bool)
         
+        # Sardinian filter
+        is_sardinian = self.request.query_params.get('is_sardinian', None)
+        if is_sardinian is not None:
+            sardinian_bool = is_sardinian.lower() in ('true', '1', 'yes')
+            queryset = queryset.filter(is_sardinian=sardinian_bool)
+        
         # Redazione-only: only recipes from Redazione (editorial) account
         redazione_only = self.request.query_params.get('redazione_only', None)
         if redazione_only is not None and redazione_only.lower() in ('true', '1', 'yes'):
@@ -349,3 +355,82 @@ class StoryPostDetailView(generics.RetrieveAPIView):
     queryset = StoryPost.objects.filter(is_published=True).select_related('author')
     serializer_class = StoryPostSerializer
     permission_classes = [AllowAny]
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def sitemap(request):
+    """Generate XML sitemap for SEO."""
+    from django.http import HttpResponse
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    base_url = request.build_absolute_uri('/').rstrip('/')
+    
+    # Get all published recipes
+    recipes = Recipe.objects.filter(is_published=True).order_by('-updated_at')
+    
+    # Get all published stories
+    stories = StoryPost.objects.filter(is_published=True).order_by('-updated_at')
+    
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    
+    # Homepage
+    xml.append('  <url>')
+    xml.append(f'    <loc>{base_url}/</loc>')
+    xml.append('    <changefreq>daily</changefreq>')
+    xml.append('    <priority>1.0</priority>')
+    xml.append('  </url>')
+    
+    # Recipes page
+    xml.append('  <url>')
+    xml.append(f'    <loc>{base_url}/recipes</loc>')
+    xml.append('    <changefreq>daily</changefreq>')
+    xml.append('    <priority>0.9</priority>')
+    xml.append('  </url>')
+    
+    # Stories page
+    xml.append('  <url>')
+    xml.append(f'    <loc>{base_url}/stories</loc>')
+    xml.append('    <changefreq>weekly</changefreq>')
+    xml.append('    <priority>0.8</priority>')
+    xml.append('  </url>')
+    
+    # Privacy and Terms
+    xml.append('  <url>')
+    xml.append(f'    <loc>{base_url}/privacy</loc>')
+    xml.append('    <changefreq>monthly</changefreq>')
+    xml.append('    <priority>0.3</priority>')
+    xml.append('  </url>')
+    
+    xml.append('  <url>')
+    xml.append(f'    <loc>{base_url}/terms</loc>')
+    xml.append('    <changefreq>monthly</changefreq>')
+    xml.append('    <priority>0.3</priority>')
+    xml.append('  </url>')
+    
+    # Individual recipes
+    for recipe in recipes:
+        lastmod = recipe.updated_at.strftime('%Y-%m-%d')
+        slug_or_id = recipe.slug or str(recipe.id)
+        xml.append('  <url>')
+        xml.append(f'    <loc>{base_url}/recipe/{slug_or_id}</loc>')
+        xml.append(f'    <lastmod>{lastmod}</lastmod>')
+        xml.append('    <changefreq>weekly</changefreq>')
+        xml.append('    <priority>0.8</priority>')
+        xml.append('  </url>')
+    
+    # Individual stories
+    for story in stories:
+        lastmod = story.updated_at.strftime('%Y-%m-%d')
+        xml.append('  <url>')
+        xml.append(f'    <loc>{base_url}/stories/{story.id}</loc>')
+        xml.append(f'    <lastmod>{lastmod}</lastmod>')
+        xml.append('    <changefreq>monthly</changefreq>')
+        xml.append('    <priority>0.7</priority>')
+        xml.append('  </url>')
+    
+    xml.append('</urlset>')
+    
+    return HttpResponse('\n'.join(xml), content_type='application/xml')

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { recipeAPI } from '../services/api';
 import Footer from './Footer';
+import SEO from './SEO';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -30,7 +31,7 @@ const LandingPage = () => {
 
   const fetchRedazioneRecipes = async () => {
     try {
-      const data = await recipeAPI.getRecipes('', '', null, null, true);
+      const data = await recipeAPI.getRecipes('', '', null, null, null, true);
       setRedazioneRecipes(data.results || data);
     } catch (err) {
       console.error('Error fetching redazione recipes:', err);
@@ -99,6 +100,11 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
+      <SEO
+        title="Ricette Autentiche dal Cuore della Sardegna"
+        description="Scopri le ricette tradizionali sarde tramandate nel tempo. Ricette senza glutine, senza lattosio, primi piatti, dolci e molto altro dalla cucina tradizionale sarda."
+        keywords="ricette sarde, cucina tradizionale sarda, ricette senza glutine, ricette senza lattosio, culurgiones, seadas, ricette italiane"
+      />
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-overlay"></div>

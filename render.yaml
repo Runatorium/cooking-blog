@@ -1,0 +1,53 @@
+services:
+  # Django Backend Service
+  - type: web
+    name: sardegna-ricette-backend
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      cd frontend && npm install && npm run build && cd ..
+      python manage.py collectstatic --no-input
+    startCommand: |
+      python manage.py migrate --no-input
+      gunicorn cooking_blog.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DJANGO_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sardegna-ricette-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://sardegna-ricette.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://sardegna-ricette.onrender.com
+      - key: RENDER_EXTERNAL_HOSTNAME
+        fromService:
+          type: web
+          name: sardegna-ricette-backend
+          property: host
+
+  # PostgreSQL Database
+  - type: pspg
+    name: sardegna-ricette-db
+    plan: free
+    databaseName: sardegna_ricette
+    user: sardegna_ricette_user
+
+  # React Frontend Service (Static Site)
+  - type: web
+    name: sardegna-ricette-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: sardegna-ricette-backend
+          property: host

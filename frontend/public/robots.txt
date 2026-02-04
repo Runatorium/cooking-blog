@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and API endpoints
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /publish/
+Disallow: /edit-recipe/
+Disallow: /login/
+Disallow: /register/
+Disallow: /coupons/
+
+# Allow important pages
+Allow: /
+Allow: /recipes
+Allow: /recipe/
+Allow: /stories
+Allow: /privacy
+Allow: /terms
+
+# Sitemap (update with your backend URL)
+Sitemap: https://your-backend-url.onrender.com/api/sitemap.xml

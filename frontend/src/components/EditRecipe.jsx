@@ -16,6 +16,7 @@ const EditRecipe = () => {
     prepTime: '',
     glutenFree: false,
     lactoseFree: false,
+    isSardinian: false,
     isPublished: true,
     finalComment: '',
     ingredients: [''],
@@ -63,6 +64,7 @@ const EditRecipe = () => {
         prepTime: recipe.prep_time?.toString() || '',
         glutenFree: recipe.gluten_free || false,
         lactoseFree: recipe.lactose_free || false,
+        isSardinian: recipe.is_sardinian || false,
         isPublished: recipe.is_published !== undefined ? recipe.is_published : true,
         finalComment: recipe.final_comment || '',
         ingredients: recipe.ingredients && recipe.ingredients.length > 0
@@ -319,6 +321,23 @@ const EditRecipe = () => {
                     onChange={handleChange}
                   />
                   <span className="checkbox-text">Pubblica la ricetta</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Recipe Origin */}
+            <div className="form-section">
+              <h2 className="section-title">Origine della Ricetta</h2>
+              <div className="dietary-options">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="isSardinian"
+                    checked={formData.isSardinian}
+                    onChange={handleChange}
+                  />
+                  <span className="checkbox-icon">🏝️</span>
+                  <span className="checkbox-text">Ricetta Sarda</span>
                 </label>
               </div>
             </div>

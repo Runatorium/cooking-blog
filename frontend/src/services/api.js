@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -107,12 +108,13 @@ export const authAPI = {
 };
 
 export const recipeAPI = {
-  getRecipes: async (searchQuery = '', category = '', glutenFree = null, lactoseFree = null, redazioneOnly = false, orderBy = '') => {
+  getRecipes: async (searchQuery = '', category = '', glutenFree = null, lactoseFree = null, isSardinian = null, redazioneOnly = false, orderBy = '') => {
     const params = new URLSearchParams();
     if (searchQuery) params.append('search', searchQuery);
     if (category) params.append('category', category);
     if (glutenFree !== null) params.append('gluten_free', glutenFree.toString());
     if (lactoseFree !== null) params.append('lactose_free', lactoseFree.toString());
+    if (isSardinian !== null) params.append('is_sardinian', isSardinian.toString());
     if (redazioneOnly) params.append('redazione_only', 'true');
     if (orderBy && (orderBy === 'likes' || orderBy === 'most_liked')) params.append('order_by', orderBy);
     
@@ -145,6 +147,7 @@ export const recipeAPI = {
     formData.append('prep_time', recipeData.prepTime.toString());
     formData.append('gluten_free', recipeData.glutenFree ? 'true' : 'false');
     formData.append('lactose_free', recipeData.lactoseFree ? 'true' : 'false');
+    formData.append('is_sardinian', recipeData.isSardinian ? 'true' : 'false');
     if (recipeData.finalComment && recipeData.finalComment.trim()) {
       formData.append('final_comment', recipeData.finalComment.trim());
     }
@@ -184,6 +187,7 @@ export const recipeAPI = {
     formData.append('prep_time', recipeData.prepTime.toString());
     formData.append('gluten_free', recipeData.glutenFree ? 'true' : 'false');
     formData.append('lactose_free', recipeData.lactoseFree ? 'true' : 'false');
+    formData.append('is_sardinian', recipeData.isSardinian ? 'true' : 'false');
     if (recipeData.isPublished !== undefined) {
       formData.append('is_published', recipeData.isPublished ? 'true' : 'false');
     }

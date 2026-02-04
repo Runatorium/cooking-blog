@@ -85,7 +85,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id', 'slug', 'title', 'description', 'final_comment', 'category', 'prep_time',
-            'author', 'image', 'gluten_free', 'lactose_free',
+            'author', 'image', 'gluten_free', 'lactose_free', 'is_sardinian',
             'created_at', 'updated_at', 'is_published',
             'ingredients', 'instructions', 'likes_count', 'is_liked'
         )
@@ -157,7 +157,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'title', 'description', 'final_comment', 'category', 'prep_time',
-            'ingredients', 'instructions', 'image', 'gluten_free', 'lactose_free'
+            'ingredients', 'instructions', 'image', 'gluten_free', 'lactose_free', 'is_sardinian'
         )
     
     def create(self, validated_data):
@@ -257,7 +257,7 @@ class RecipeUpdateSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'title', 'description', 'final_comment', 'category', 'prep_time',
-            'ingredients', 'instructions', 'image', 'gluten_free', 'lactose_free', 'is_published'
+            'ingredients', 'instructions', 'image', 'gluten_free', 'lactose_free', 'is_sardinian', 'is_published'
         )
     
     def update(self, instance, validated_data):

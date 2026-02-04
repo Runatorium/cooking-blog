@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { storyAPI } from '../services/api';
 import Footer from './Footer';
+import SEO from './SEO';
 import './StoriePage.css';
 
 const StoriePage = () => {
@@ -40,8 +41,49 @@ const StoriePage = () => {
     });
   };
 
+  // Format story content: convert markdown to HTML
+  const formatStoryContent = (content) => {
+    if (!content) return '';
+    
+    // Split by double line breaks to create paragraphs
+    const paragraphs = content.split(/\n\n+/).filter(p => p.trim());
+    
+    return paragraphs.map((para, idx) => {
+      let formatted = para.trim();
+      
+      // Check if paragraph contains bullet points (lines starting with •)
+      const lines = formatted.split('\n').map(l => l.trim()).filter(l => l);
+      const hasBullets = lines.some(line => line.startsWith('•'));
+      
+      if (hasBullets) {
+        // Handle bullet list
+        const bulletItems = lines
+          .filter(line => line.startsWith('•'))
+          .map(line => {
+            let item = line.replace(/^•\s*/, '');
+            // Convert **bold** to <strong>
+            item = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            return `<div class="story-bullet-point">${item}</div>`;
+          });
+        return bulletItems.join('');
+      }
+      
+      // Regular paragraph: convert **bold** to <strong>
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Replace single line breaks with spaces for regular paragraphs
+      formatted = formatted.replace(/\n/g, ' ');
+      
+      return `<p>${formatted}</p>`;
+    }).join('');
+  };
+
   return (
     <div className="storie-page">
+      <SEO
+        title="Le Nostre Storie - Sardegna Ricette e non solo"
+        description="Scopri le storie delle persone dietro le ricette: chef, cuochi casalinghi e appassionati che condividono la loro passione per la cucina tradizionale sarda."
+        keywords="storie cucina sarda, chef sardi, tradizioni culinarie sarde, storie ricette"
+      />
       {/* Hero Section */}
       <section className="storie-hero">
         <div className="container">
@@ -69,11 +111,6 @@ const StoriePage = () => {
           ) : stories.length === 0 ? (
             <div className="stories-grid">
               <div className="story-card">
-                <div className="story-image">
-                  <div className="story-image-placeholder">
-                    <div className="story-avatar-large">👨‍🍳</div>
-                  </div>
-                </div>
                 <div className="story-content">
                   <div className="story-header">
                     <div className="story-author-info">
@@ -96,26 +133,11 @@ const StoriePage = () => {
             <div className="stories-grid">
               {stories.map((story) => (
                 <div key={story.id} className="story-card">
-                  <div className="story-image">
-                    {story.image ? (
-                      <img
-                        src={story.image.startsWith('http') ? story.image : `http://localhost:8000${story.image}`}
-                        alt={story.title}
-                        className="story-image-img"
-                      />
-                    ) : (
-                      <div className="story-image-placeholder">
-                        <div className="story-avatar-large">
-                          {story.author?.name ? story.author.name.charAt(0).toUpperCase() : '👨‍🍳'}
-                        </div>
-                      </div>
-                    )}
-                  </div>
                   <div className="story-content">
                     <div className="story-header">
                       <div className="story-author-info">
                         <div className="story-avatar">
-                          {story.author?.name ? story.author.name.charAt(0).toUpperCase() : '👨‍🍳'}
+                          {story.author?.is_redazione ? '👨‍🍳' : (story.author?.name ? story.author.name.charAt(0).toUpperCase() : '👨‍🍳')}
                         </div>
                         <div className="story-author-details">
                           <h3 className="story-title">{story.title}</h3>
@@ -133,9 +155,10 @@ const StoriePage = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="story-text">
-                      <p>{story.content}</p>
-                    </div>
+                    <div 
+                      className="story-text"
+                      dangerouslySetInnerHTML={{ __html: formatStoryContent(story.content) }}
+                    />
                   </div>
                 </div>
               ))}

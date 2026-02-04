@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { recipeAPI } from '../services/api';
 import Footer from './Footer';
+import SEO from './SEO';
+import RecipeStructuredData from './RecipeStructuredData';
+import ShareButton from './ShareButton';
 import './RecipeDetail.css';
 
 const RecipeDetail = () => {
@@ -145,8 +148,30 @@ const RecipeDetail = () => {
     );
   }
 
+  const recipeImage = recipe.image 
+    ? (recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000${recipe.image}`)
+    : null;
+  
+  const categoryDisplayName = getCategoryDisplayName(recipe.category);
+  const keywords = [
+    'ricette sarde',
+    'cucina tradizionale sarda',
+    categoryDisplayName.toLowerCase(),
+    recipe.is_sardinian ? 'ricetta sarda' : '',
+    recipe.gluten_free ? 'senza glutine' : '',
+    recipe.lactose_free ? 'senza lattosio' : '',
+  ].filter(k => k).join(', ');
+
   return (
     <div className="recipe-detail-page">
+      <SEO
+        title={recipe.title}
+        description={`${recipe.description.substring(0, 155)}... Ricetta tradizionale sarda. Tempo di preparazione: ${recipe.prep_time} minuti.`}
+        keywords={keywords}
+        image={recipeImage}
+        type="article"
+      />
+      {recipe && <RecipeStructuredData recipe={recipe} />}
       {/* Main Content */}
       <main className="recipe-detail-main">
         <div className="recipe-detail-container">
@@ -195,6 +220,7 @@ const RecipeDetail = () => {
                 <span className="like-icon">{recipe.is_liked ? '❤️' : '🤍'}</span>
                 <span className="like-count">{recipe.likes_count || 0}</span>
               </button>
+              <ShareButton recipe={recipe} />
               {isAuthenticated && recipe.author?.id !== user?.id && (
                 <button
                   onClick={() => setShowReportModal(true)}
