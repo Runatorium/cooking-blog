@@ -25,9 +25,8 @@ urlpatterns = [
     path('api/', include('blog.urls')),
 ]
 
-# Serve media files (uploaded images) in all environments when MEDIA_ROOT exists
-if settings.MEDIA_ROOT.exists():
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files (uploaded images). Add route always; dir may not exist yet at build time (disk only at runtime).
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # Static files: only in development (production uses WhiteNoise)
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
