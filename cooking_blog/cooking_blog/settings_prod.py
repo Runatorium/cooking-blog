@@ -102,12 +102,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (uploads). Use persistent disk on Render so uploads survive redeploys.
-# Do not create MEDIA_ROOT here: the disk is only mounted at runtime, not during build.
+# Without a disk, use /tmp so uploads work (Render's app dir can be read-only); they're ephemeral.
 RENDER_DISK_PATH = os.environ.get('RENDER_DISK_PATH')
 if RENDER_DISK_PATH:
     MEDIA_ROOT = Path(RENDER_DISK_PATH) / 'media'
 else:
-    MEDIA_ROOT = BASE_DIR / 'media'
+    MEDIA_ROOT = Path('/tmp/cooking_blog_media')
 MEDIA_URL = '/media/'
 
 # WhiteNoise configuration for static files
