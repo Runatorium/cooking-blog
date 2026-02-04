@@ -70,16 +70,23 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       const errorData = error.response?.data;
       if (errorData) {
-        // Handle validation errors
-        const errorMessages = Object.values(errorData).flat();
+        // Handle validation errors (e.g. 400 with field errors)
+        const messages = Object.values(errorData).flat().filter(Boolean);
         return {
           success: false,
-          error: errorMessages.join(', ') || 'Registrazione fallita. Riprova.',
+          error: messages.length ? messages.join(', ') : 'Registrazione fallita. Riprova.',
         };
+      }
+      // No response = request never reached server (network error, CORS, wrong URL)
+      if (!error.response) {
+        const msg = error.code === 'ERR_NETWORK'
+          ? 'Impossibile contattare il server. Verifica la connessione e che il backend sia raggiungibile.'
+          : (error.message || 'Errore di connessione. Riprova.');
+        return { success: false, error: msg };
       }
       return {
         success: false,
-        error: 'Registrazione fallita. Riprova.',
+        error: error.response?.data?.error || 'Registrazione fallita. Riprova.',
       };
     }
   };

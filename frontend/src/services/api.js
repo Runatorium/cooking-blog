@@ -1,7 +1,24 @@
 import axios from 'axios';
 
-// Use environment variable for API URL, fallback to localhost for development
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// Use environment variable for API URL, fallback to localhost for development.
+// Normalize: Render's fromService may give service name (e.g. sardegna-ricette-backend) or
+// hostname (xxx.onrender.com). Without a protocol, browsers treat baseURL as relative path,
+// so we must produce an absolute URL with https and /api.
+function normalizeApiBaseUrl(value) {
+  if (!value || typeof value !== 'string') return 'http://localhost:8000/api';
+  let trimmed = value.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    const url = trimmed.endsWith('/') ? trimmed.slice(0, -1) : trimmed;
+    return url.endsWith('/api') ? url : `${url.replace(/\/?$/, '')}/api`;
+  }
+  // Render fromService "host" can be the service name only (no dot) — treat as *.onrender.com
+  if (!trimmed.includes('.')) {
+    trimmed = `${trimmed}.onrender.com`;
+  }
+  const base = `https://${trimmed}`;
+  return base.endsWith('/api') ? base : `${base.replace(/\/?$/, '')}/api`;
+}
+const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_URL);
 
 // Create axios instance with default config
 const api = axios.create({

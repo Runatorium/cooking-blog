@@ -8,6 +8,7 @@ services:
       pip install -r requirements.txt
       cd frontend && npm install && npm run build && cd ..
       cd cooking_blog && python manage.py collectstatic --no-input
+    # Start Gunicorn only - run migrations once via Shell: cd cooking_blog && python manage.py migrate
     startCommand: cd cooking_blog && gunicorn cooking_blog.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --access-logfile - --error-logfile -
     envVars:
       - key: DJANGO_ENV
@@ -20,6 +21,7 @@ services:
         fromDatabase:
           name: sardegna-ricette-db
           property: connectionString
+      # Required: set to your frontend origin so registration/login work (e.g. https://sardegna-ricette-frontend.onrender.com)
       - key: FRONTEND_URL
         sync: false
       - key: CORS_ALLOWED_ORIGINS
