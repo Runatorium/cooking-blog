@@ -422,6 +422,12 @@ const BlogPage = () => {
                       <div className="post-meta">
                         {recipe.author?.is_redazione && <span className="redazione-badge">Redazione</span>}
                         <span className="post-category">{reverseCategoryMap[recipe.category] || recipe.category}</span>
+                        {(recipe.gluten_free || recipe.lactose_free) && (
+                          <div className="dietary-badges-card">
+                            {recipe.gluten_free && <span className="dietary-badge-card" title="Senza Glutine">🌾</span>}
+                            {recipe.lactose_free && <span className="dietary-badge-card" title="Senza Lattosio">🥛</span>}
+                          </div>
+                        )}
                         <span className="post-date">{formatDate(recipe.created_at)}</span>
                       </div>
                       <h2 className="post-title">{recipe.title}</h2>

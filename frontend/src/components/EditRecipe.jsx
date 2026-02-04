@@ -17,6 +17,7 @@ const EditRecipe = () => {
     glutenFree: false,
     lactoseFree: false,
     isPublished: true,
+    finalComment: '',
     ingredients: [''],
     instructions: [''],
     image: null,
@@ -63,6 +64,7 @@ const EditRecipe = () => {
         glutenFree: recipe.gluten_free || false,
         lactoseFree: recipe.lactose_free || false,
         isPublished: recipe.is_published !== undefined ? recipe.is_published : true,
+        finalComment: recipe.final_comment || '',
         ingredients: recipe.ingredients && recipe.ingredients.length > 0
           ? recipe.ingredients.map(ing => ing.name || ing)
           : [''],
@@ -345,6 +347,22 @@ const EditRecipe = () => {
                   <span className="checkbox-icon">🥛</span>
                   <span className="checkbox-text">Senza Lattosio</span>
                 </label>
+              </div>
+            </div>
+
+            {/* Final Author Comment */}
+            <div className="form-section">
+              <h2 className="section-title">Commento finale dell'autore (opzionale)</h2>
+              <div className="form-group">
+                <label htmlFor="finalComment">Commenti finali dell'autore</label>
+                <textarea
+                  id="finalComment"
+                  name="finalComment"
+                  value={formData.finalComment}
+                  onChange={handleChange}
+                  rows="3"
+                  placeholder="Un breve pensiero personale, un consiglio, un ricordo legato a questa ricetta..."
+                />
               </div>
             </div>
 

@@ -145,6 +145,9 @@ export const recipeAPI = {
     formData.append('prep_time', recipeData.prepTime.toString());
     formData.append('gluten_free', recipeData.glutenFree ? 'true' : 'false');
     formData.append('lactose_free', recipeData.lactoseFree ? 'true' : 'false');
+    if (recipeData.finalComment && recipeData.finalComment.trim()) {
+      formData.append('final_comment', recipeData.finalComment.trim());
+    }
     
     // Add ingredients as array
     recipeData.ingredients.forEach((ingredient) => {
@@ -183,6 +186,9 @@ export const recipeAPI = {
     formData.append('lactose_free', recipeData.lactoseFree ? 'true' : 'false');
     if (recipeData.isPublished !== undefined) {
       formData.append('is_published', recipeData.isPublished ? 'true' : 'false');
+    }
+    if (recipeData.finalComment !== undefined) {
+      formData.append('final_comment', recipeData.finalComment || '');
     }
     
     // Add ingredients as array

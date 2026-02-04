@@ -15,6 +15,7 @@ const PublishRecipe = () => {
     prepTime: '',
     glutenFree: false,
     lactoseFree: false,
+    finalComment: '',
     ingredients: [''],
     instructions: [''],
     image: null,
@@ -367,6 +368,22 @@ const PublishRecipe = () => {
                   </div>
                 </label>
                 {imageError && <div className="error-message">{imageError}</div>}
+              </div>
+            </div>
+
+            {/* Final Author Comment */}
+            <div className="form-section">
+              <h2 className="section-title">Commento finale dell'autore (opzionale)</h2>
+              <div className="form-group">
+                <label htmlFor="finalComment">Commenti finali dell'autore</label>
+                <textarea
+                  id="finalComment"
+                  name="finalComment"
+                  value={formData.finalComment}
+                  onChange={handleChange}
+                  rows="3"
+                  placeholder="Un breve pensiero personale, un consiglio, un ricordo legato a questa ricetta..."
+                />
               </div>
             </div>
 

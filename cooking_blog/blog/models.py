@@ -95,6 +95,11 @@ class Recipe(models.Model):
         verbose_name="In evidenza",
         help_text="Ricetta in evidenza: mostrata in homepage. Solo una ricetta può essere in evidenza."
     )
+    final_comment = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Commenti finali dell'autore da mostrare in fondo alla ricetta."
+    )
     liked_by = models.ManyToManyField(User, through='RecipeLike', related_name='liked_recipes', blank=True)
     
     class Meta:

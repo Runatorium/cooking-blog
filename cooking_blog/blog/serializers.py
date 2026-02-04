@@ -84,7 +84,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'slug', 'title', 'description', 'category', 'prep_time',
+            'id', 'slug', 'title', 'description', 'final_comment', 'category', 'prep_time',
             'author', 'image', 'gluten_free', 'lactose_free',
             'created_at', 'updated_at', 'is_published',
             'ingredients', 'instructions', 'likes_count', 'is_liked'
@@ -156,7 +156,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'title', 'description', 'category', 'prep_time',
+            'title', 'description', 'final_comment', 'category', 'prep_time',
             'ingredients', 'instructions', 'image', 'gluten_free', 'lactose_free'
         )
     
@@ -256,7 +256,7 @@ class RecipeUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'title', 'description', 'category', 'prep_time',
+            'title', 'description', 'final_comment', 'category', 'prep_time',
             'ingredients', 'instructions', 'image', 'gluten_free', 'lactose_free', 'is_published'
         )
     

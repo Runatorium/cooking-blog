@@ -259,6 +259,14 @@ const RecipeDetail = () => {
               </ol>
             </section>
           </div>
+
+          {/* Final Author Comment */}
+          {recipe.final_comment && recipe.final_comment.trim() && (
+            <section className="final-comment-section">
+              <h2 className="section-title">Commento finale dell'autore</h2>
+              <p className="final-comment-body">{recipe.final_comment}</p>
+            </section>
+          )}
         </div>
       </main>
 
