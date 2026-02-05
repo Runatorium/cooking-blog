@@ -67,6 +67,11 @@ const BlogPage = () => {
     }
   };
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category');
     const category = validCategoryNames.includes(categoryFromUrl || '') ? categoryFromUrl : '';
