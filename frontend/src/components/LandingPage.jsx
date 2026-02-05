@@ -275,6 +275,14 @@ const LandingPage = () => {
               </>
             )}
           </div>
+          {/* Quick Access to All Recipes */}
+          <div className="recipes-cta-section">
+            <Link to="/recipes" className="btn-view-all-recipes">
+              <span className="btn-icon">🍳</span>
+              <span className="btn-text">Esplora tutte le Ricette</span>
+              <span className="btn-arrow">→</span>
+            </Link>
+          </div>
         </div>
       </section>
 

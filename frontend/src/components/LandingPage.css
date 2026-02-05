@@ -336,6 +336,56 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Quick Access Button Section */
+.recipes-cta-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+  margin-top: 2rem;
+}
+
+.btn-view-all-recipes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 2.5rem;
+  background: #d2691e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.3);
+  font-family: 'Georgia', serif;
+}
+
+.btn-view-all-recipes:hover {
+  background: #b85a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(210, 105, 30, 0.4);
+}
+
+.btn-view-all-recipes .btn-icon {
+  font-size: 1.5rem;
+}
+
+.btn-view-all-recipes .btn-text {
+  font-size: 1.1rem;
+}
+
+.btn-view-all-recipes .btn-arrow {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-view-all-recipes:hover .btn-arrow {
+  transform: translateX(4px);
 }
 
 .recipe-card {
@@ -818,6 +868,11 @@
     grid-template-columns: 1fr;
   }
 
+  .btn-view-all-recipes {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
   .categories-grid {
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
@@ -869,6 +924,21 @@
 
   .recipe-title {
     font-size: 1.35rem;
+  }
+
+  .btn-view-all-recipes {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .btn-view-all-recipes .btn-icon {
+    font-size: 1.3rem;
+  }
+
+  .btn-view-all-recipes .btn-arrow {
+    font-size: 1.1rem;
   }
 
   .btn-view-recipe {
