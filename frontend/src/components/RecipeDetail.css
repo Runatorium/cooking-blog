@@ -85,6 +85,9 @@
   color: #666;
   line-height: 1.8;
   margin-bottom: 2rem;
+  /* Full description shown - no truncation */
+  display: block;
+  overflow: visible;
 }
 
 .recipe-meta-bottom {
@@ -796,6 +799,9 @@
 
   .recipe-description {
     font-size: 1.1rem;
+    /* Full description shown - no truncation */
+    display: block;
+    overflow: visible;
   }
 
   .recipe-meta-bottom {
