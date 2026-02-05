@@ -203,7 +203,7 @@ const LandingPage = () => {
           <div className="recipes-grid">
             {latestRecipes.length > 0 ? (
               latestRecipes.map((recipe) => (
-                <Link key={recipe.id} to={`/recipe/${recipe.slug || recipe.id}`} className={`recipe-card ${recipe.author?.is_redazione ? 'recipe-card--redazione' : ''}`}>
+                <div key={recipe.id} className={`recipe-card ${recipe.author?.is_redazione ? 'recipe-card--redazione' : ''}`}>
                   <div className={`recipe-card-image ${!recipe.image ? getImageClass(recipe.category) : ''}`}>
                     {recipe.image && (
                       <img 
@@ -225,8 +225,11 @@ const LandingPage = () => {
                     <div className="recipe-card-author">
                       <span>Di {recipe.author?.display_name || recipe.author?.name || 'Autore Sconosciuto'} • {formatDate(recipe.created_at)}</span>
                     </div>
+                    <Link to={`/recipe/${recipe.slug || recipe.id}`} className="btn-recipe-card">
+                      Vedi Ricetta
+                    </Link>
                   </div>
-                </Link>
+                </div>
               ))
             ) : (
               <>
@@ -242,6 +245,9 @@ const LandingPage = () => {
                     <div className="recipe-card-author">
                       <span>Di Elena Rossi • 25 Ott 2023</span>
                     </div>
+                    <Link to="/recipes" className="btn-recipe-card">
+                      Vedi Ricetta
+                    </Link>
                   </div>
                 </div>
                 <div className="recipe-card">
@@ -256,6 +262,9 @@ const LandingPage = () => {
                     <div className="recipe-card-author">
                       <span>Di Giuseppe Marino • 22 Ott 2023</span>
                     </div>
+                    <Link to="/recipes" className="btn-recipe-card">
+                      Vedi Ricetta
+                    </Link>
                   </div>
                 </div>
                 <div className="recipe-card">
@@ -270,6 +279,9 @@ const LandingPage = () => {
                     <div className="recipe-card-author">
                       <span>Di Lucia Bianchi • 20 Ott 2023</span>
                     </div>
+                    <Link to="/recipes" className="btn-recipe-card">
+                      Vedi Ricetta
+                    </Link>
                   </div>
                 </div>
               </>

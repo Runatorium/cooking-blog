@@ -394,7 +394,8 @@
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
-  display: block;
+  display: flex;
+  flex-direction: column;
   text-decoration: none;
   color: inherit;
 }
@@ -475,6 +476,9 @@
 
 .recipe-card-content {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .recipe-card-content h4 {
@@ -493,11 +497,36 @@
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
 }
 
 .recipe-card-author {
   font-size: 0.875rem;
   color: #999;
+  margin-bottom: 1rem;
+}
+
+.btn-recipe-card {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #d2691e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-recipe-card:hover {
+  background: #b85a1a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(210, 105, 30, 0.3);
 }
 
 /* Categories Section */
