@@ -254,6 +254,10 @@
   color: #666;
   line-height: 1.7;
   margin-bottom: 2rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .recipe-author {
@@ -434,6 +438,10 @@
   color: #666;
   line-height: 1.6;
   margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .recipe-card-author {

@@ -575,6 +575,10 @@
   line-height: 1.7;
   margin-bottom: 1.5rem;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .post-footer {
