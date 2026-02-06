@@ -95,7 +95,7 @@
 
 /* Featured Recipe Section */
 .featured-recipe-section {
-  padding: 5rem 0;
+  padding: 3rem 0;
   background: var(--bg-card, #fdfbf8);
 }
 
@@ -109,11 +109,11 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .section-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #5a4a3a;
   font-family: 'Georgia', serif;
@@ -135,11 +135,13 @@
 .featured-recipe-card {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 2rem;
   background: var(--bg-card, #fdfbf8);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .featured-recipe-card--redazione {
@@ -152,25 +154,26 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .featured-recipe-image {
   position: relative;
-  min-height: 400px;
+  min-height: 260px;
   overflow: hidden;
 }
 
 .featured-recipe-image img {
   width: 100%;
   height: 100%;
-  min-height: 400px;
+  min-height: 260px;
   object-fit: cover;
 }
 
 .recipe-image-placeholder {
   width: 100%;
   height: 100%;
-  min-height: 400px;
+  min-height: 260px;
   background-size: cover;
   background-position: center;
 }
@@ -186,11 +189,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 5rem;
+  font-size: 3.5rem;
 }
 
 .featured-recipe-content {
-  padding: 2.5rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -198,8 +201,8 @@
 
 .recipe-tags {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
@@ -241,20 +244,20 @@
 }
 
 .recipe-title {
-  font-size: 2.25rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #5a4a3a;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
   font-family: 'Georgia', serif;
   line-height: 1.3;
 }
 
 /* Featured recipe description - limit to 4 lines */
 .featured-recipe-card .recipe-description {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #666;
-  line-height: 1.7;
-  margin-bottom: 2rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
@@ -264,13 +267,13 @@
 .recipe-author {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .author-avatar {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #d2691e;
   color: #fff;
@@ -324,6 +327,11 @@
 
 .btn-view-recipe:hover {
   background: #b85a1a;
+}
+
+.featured-recipe-card .btn-view-recipe {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
 }
 
 /* Latest Recipes Section */
@@ -857,7 +865,7 @@
   .featured-recipe-image,
   .featured-recipe-image img,
   .recipe-image-placeholder {
-    min-height: 280px;
+    min-height: 220px;
   }
 
   .latest-recipes-section .container {
@@ -890,7 +898,7 @@
   }
 
   .recipe-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
   .recipes-grid {
@@ -952,7 +960,7 @@
   }
 
   .recipe-title {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
   }
 
   .btn-view-all-recipes {
