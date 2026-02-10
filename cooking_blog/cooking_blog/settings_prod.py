@@ -21,6 +21,13 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
+# Add custom domain for API
+ALLOWED_HOSTS.extend([
+    'api.sardegnaricette.it',
+    'sardegnaricette.it',
+    'www.sardegnaricette.it',
+])
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
