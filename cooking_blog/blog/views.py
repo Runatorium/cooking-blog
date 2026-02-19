@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
@@ -360,12 +361,12 @@ class StoryPostDetailView(generics.RetrieveAPIView):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def sitemap(request):
-    """Generate XML sitemap for SEO."""
+    """Generate XML sitemap for SEO. Uses frontend URL so search engines index the right domain."""
     from django.http import HttpResponse
     from django.utils import timezone
     from datetime import timedelta
     
-    base_url = request.build_absolute_uri('/').rstrip('/')
+    base_url = getattr(settings, 'FRONTEND_URL', 'https://sardegnaricette.it').rstrip('/')
     
     # Get all published recipes
     recipes = Recipe.objects.filter(is_published=True).order_by('-updated_at')
