@@ -46,6 +46,7 @@ const RecipeStructuredData = ({ recipe }) => {
       datePublished: recipe.created_at,
       dateModified: recipe.updated_at || recipe.created_at,
       prepTime: `PT${recipe.prep_time}M`,
+      totalTime: `PT${recipe.prep_time}M`,
       recipeCategory: categoryMap[recipe.category] || recipe.category,
       recipeCuisine: recipe.is_sardinian ? 'Italian' : 'Italian',
       recipeYield: '4-6 porzioni',

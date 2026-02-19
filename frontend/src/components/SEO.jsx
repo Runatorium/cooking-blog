@@ -17,12 +17,12 @@ const SEO = ({
   const baseUrl = import.meta.env.VITE_BASE_URL || window.location.origin;
   const currentUrl = `${baseUrl}${location.pathname}`;
   
-  // Default values
-  const defaultTitle = 'Sardegna Ricette e non solo - Ricette Tradizionali Sarde Autentiche';
-  const defaultDescription = 'Scopri le ricette tradizionali sarde autentiche tramandate di generazione in generazione. Ricette senza glutine, senza lattosio, primi piatti, dolci e molto altro dalla cucina sarda.';
+  // Default values (SEO-optimized: keyword-first, 140-160 char descriptions)
+  const defaultTitle = 'Ricette Sarde Tradizionali | Cucina Tipica della Sardegna';
+  const defaultDescription = 'Scopri le migliori ricette sarde tradizionali: primi, dolci, pane e piatti tipici della cucina della Sardegna spiegati passo passo.';
   const defaultImage = `${baseUrl}/og-image.jpg`;
   
-  const finalTitle = title ? `${title} | Sardegna Ricette e non solo` : defaultTitle;
+  const finalTitle = title ? `${title} | Ricette Sarde` : defaultTitle;
   const finalDescription = description || defaultDescription;
   const finalImage = image || defaultImage;
   

@@ -166,7 +166,7 @@ const RecipeDetail = () => {
     <div className="recipe-detail-page">
       <SEO
         title={recipe.title}
-        description={`${recipe.description.substring(0, 155)}... Ricetta tradizionale sarda. Tempo di preparazione: ${recipe.prep_time} minuti.`}
+        description={`${recipe.description.substring(0, 100)}... Ricetta sarda. Prep: ${recipe.prep_time} min. Vedi ingredienti e istruzioni.`}
         keywords={keywords}
         image={recipeImage}
         type="article"
@@ -238,7 +238,7 @@ const RecipeDetail = () => {
             {recipe.image ? (
               <img 
                 src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
-                alt={recipe.title}
+                alt={`${recipe.title} - Ricetta sarda tradizionale`}
                 className="recipe-main-image"
               />
             ) : (

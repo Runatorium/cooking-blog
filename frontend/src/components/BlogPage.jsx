@@ -255,12 +255,12 @@ const BlogPage = () => {
     : null;
   
   const seoTitle = categoryName 
-    ? `Ricette ${categoryName} - Sardegna Ricette e non solo`
-    : 'Ricette Tradizionali Sarde - Sardegna Ricette e non solo';
+    ? `Ricette ${categoryName} - Cucina Sarda`
+    : 'Ricette Tradizionali Sarde';
   
   const seoDescription = categoryName
-    ? `Scopri le migliori ricette ${String(categoryName).toLowerCase()} tradizionali sarde. Ricette autentiche tramandate di generazione in generazione.`
-    : 'Esplora la collezione completa di ricette tradizionali sarde. Ricette senza glutine, senza lattosio, primi piatti, dolci e molto altro dalla cucina sarda.';
+    ? `Scopri le migliori ricette ${String(categoryName).toLowerCase()} tradizionali sarde. Ricette autentiche spiegate passo passo.`
+    : 'Esplora la collezione completa di ricette tradizionali sarde: primi, dolci, pane e piatti tipici della cucina della Sardegna.';
 
   return (
     <div className="blog-page">
@@ -445,7 +445,7 @@ const BlogPage = () => {
                       {recipe.image ? (
                         <img 
                           src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
-                          alt={recipe.title}
+                          alt={`${recipe.title} - Ricetta sarda tradizionale`}
                           className="post-image-img"
                         />
                       ) : (

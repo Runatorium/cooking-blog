@@ -80,8 +80,8 @@ const StoriePage = () => {
   return (
     <div className="storie-page">
       <SEO
-        title="Le Nostre Storie - Sardegna Ricette e non solo"
-        description="Scopri le storie delle persone dietro le ricette: chef, cuochi casalinghi e appassionati che condividono la loro passione per la cucina tradizionale sarda."
+        title="Le Nostre Storie"
+        description="Scopri le storie dietro le ricette sarde: chef, cuochi casalinghi e appassionati che condividono la passione per la cucina tradizionale della Sardegna."
         keywords="storie cucina sarda, chef sardi, tradizioni culinarie sarde, storie ricette"
       />
       {/* Hero Section */}

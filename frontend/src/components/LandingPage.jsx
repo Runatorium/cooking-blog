@@ -102,7 +102,7 @@ const LandingPage = () => {
     <div className="landing-page">
       <SEO
         title="Ricette Autentiche dal Cuore della Sardegna"
-        description="Scopri le ricette tradizionali sarde tramandate nel tempo. Ricette senza glutine, senza lattosio, primi piatti, dolci e molto altro dalla cucina tradizionale sarda."
+        description="Scopri le migliori ricette sarde tradizionali: primi, dolci, pane e piatti tipici della cucina della Sardegna spiegati passo passo."
         keywords="ricette sarde, cucina tradizionale sarda, ricette senza glutine, ricette senza lattosio, culurgiones, seadas, ricette italiane"
       />
       {/* Hero Section */}
@@ -134,7 +134,7 @@ const LandingPage = () => {
                 {featuredRecipe.image ? (
                   <img 
                     src={featuredRecipe.image.startsWith('http') ? featuredRecipe.image : `${MEDIA_BASE_URL}${featuredRecipe.image}`}
-                    alt={featuredRecipe.title}
+                    alt={`${featuredRecipe.title} - Ricetta sarda tradizionale`}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
@@ -208,7 +208,7 @@ const LandingPage = () => {
                     {recipe.image && (
                       <img 
                         src={recipe.image.startsWith('http') ? recipe.image : `${MEDIA_BASE_URL}${recipe.image}`}
-                        alt={recipe.title}
+                        alt={`${recipe.title} - Ricetta sarda tradizionale`}
                       />
                     )}
                   </div>

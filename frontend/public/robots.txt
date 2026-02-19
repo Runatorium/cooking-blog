@@ -19,5 +19,5 @@ Allow: /stories
 Allow: /privacy
 Allow: /terms
 
-# Sitemap
-Sitemap: https://api.sardegnaricette.it/api/sitemap.xml
+# Sitemap (index on frontend, full sitemap on API)
+Sitemap: https://sardegnaricette.it/sitemap.xml
